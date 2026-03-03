@@ -1,6 +1,6 @@
 // ============================================
-// RAUSHAN DUBEY - WEB & AI SYSTEMS
-// Portfolio Website JavaScript — Enhanced v2
+// RAUSHAN DUBEY - AI & WEB SOLUTIONS
+// Portfolio Website JavaScript — v3 Electric Blue
 // ============================================
 
 // ============================================
@@ -13,98 +13,205 @@ const navLinks = document.querySelectorAll('.nav-link');
 const floatingButtons = document.getElementById('floatingButtons');
 
 // ============================================
-// SMOKE CANVAS ANIMATION (Purple Particles)
+// PLASMA ENERGY CANVAS ANIMATION
 // ============================================
-(function initSmokeCanvas() {
-  const canvas = document.getElementById('smokeCanvas');
+(function initPlasmaCanvas() {
+  const canvas = document.getElementById('plasmaCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
-  let W = canvas.width = window.innerWidth;
-  let H = canvas.height = window.innerHeight;
-
-  window.addEventListener('resize', () => {
+  let W, H;
+  function resize() {
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Mouse tracking for subtle parallax
+  let mouseX = W / 2;
+  let mouseY = H / 2;
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   });
 
-  const PARTICLE_COUNT = 60;
-  const particles = [];
+  // --- ENERGY PARTICLES (plasma flames) ---
+  const ENERGY_COUNT = 35;
+  const energyParticles = [];
 
-  function randomBetween(a, b) {
-    return a + Math.random() * (b - a);
-  }
+  function rand(a, b) { return a + Math.random() * (b - a); }
 
-  function createParticle() {
+  function createEnergy() {
     return {
-      x: randomBetween(0, W),
-      y: randomBetween(H * 0.2, H),
-      radius: randomBetween(40, 160),
-      vx: randomBetween(-0.3, 0.3),
-      vy: randomBetween(-0.6, -0.2),
-      opacity: randomBetween(0.03, 0.12),
-      fadeSpeed: randomBetween(0.0003, 0.001),
+      x: rand(0, W),
+      y: rand(H * 0.3, H * 1.1),
+      radius: rand(60, 200),
+      vx: rand(-0.2, 0.2),
+      vy: rand(-0.5, -0.15),
+      opacity: rand(0.02, 0.08),
+      fadeSpeed: rand(0.0002, 0.0006),
       growing: true,
-      maxRadius: randomBetween(80, 220),
-      // random purple hue between #8b00ff and #cc44ff
-      hue: randomBetween(270, 300),
-      saturation: randomBetween(80, 100),
-      lightness: randomBetween(50, 70),
+      maxRadius: rand(120, 280),
+      // Electric blue hue range: 195-210
+      hue: rand(195, 210),
+      saturation: rand(85, 100),
+      lightness: rand(50, 65),
     };
   }
 
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    const p = createParticle();
-    p.y = randomBetween(0, H); // spread initial positions
-    particles.push(p);
+  for (let i = 0; i < ENERGY_COUNT; i++) {
+    const p = createEnergy();
+    p.y = rand(0, H);
+    energyParticles.push(p);
   }
 
-  function drawParticle(p) {
+  function drawEnergy(p) {
     const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
     gradient.addColorStop(0, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.opacity})`);
-    gradient.addColorStop(0.5, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness - 10}%, ${p.opacity * 0.5})`);
+    gradient.addColorStop(0.4, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness - 10}%, ${p.opacity * 0.6})`);
     gradient.addColorStop(1, `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, 0)`);
-
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
   }
 
-  function updateParticle(p) {
+  function updateEnergy(p) {
     p.x += p.vx;
     p.y += p.vy;
-
-    // Gently expand/shrink
     if (p.growing) {
-      p.radius += 0.3;
+      p.radius += 0.25;
       if (p.radius >= p.maxRadius) p.growing = false;
     } else {
-      p.radius -= 0.2;
+      p.radius -= 0.15;
     }
-
-    // Fade out as particle rises
-    if (!p.growing) {
-      p.opacity -= p.fadeSpeed;
-    }
-
-    // Reset particle when faded or out of bounds
+    if (!p.growing) p.opacity -= p.fadeSpeed;
     if (p.opacity <= 0 || p.y < -p.radius * 2) {
-      const fresh = createParticle();
-      Object.assign(p, fresh);
+      Object.assign(p, createEnergy());
     }
   }
 
-  function animate() {
+  // --- FLOATING MICRO PARTICLES ---
+  const MICRO_COUNT = 50;
+  const microParticles = [];
+
+  function createMicro() {
+    return {
+      x: rand(0, W),
+      y: rand(0, H),
+      radius: rand(1, 2.5),
+      vx: rand(-0.15, 0.15),
+      vy: rand(-0.25, -0.05),
+      opacity: rand(0.15, 0.45),
+      depth: rand(0.3, 1), // parallax depth
+    };
+  }
+
+  for (let i = 0; i < MICRO_COUNT; i++) {
+    microParticles.push(createMicro());
+  }
+
+  function drawMicro(p) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0, 191, 255, ${p.opacity})`;
+    ctx.fill();
+  }
+
+  function updateMicro(p) {
+    // Parallax offset based on mouse
+    const parallaxX = (mouseX - W / 2) * 0.005 * p.depth;
+    const parallaxY = (mouseY - H / 2) * 0.005 * p.depth;
+    p.x += p.vx + parallaxX * 0.01;
+    p.y += p.vy + parallaxY * 0.01;
+
+    if (p.y < -10) { p.y = H + 10; p.x = rand(0, W); }
+    if (p.x < -10) p.x = W + 10;
+    if (p.x > W + 10) p.x = -10;
+  }
+
+  // --- NETWORK LINES between nearby micro particles ---
+  function drawNetworkLines() {
+    const maxDist = 120;
+    ctx.strokeStyle = 'rgba(0, 191, 255, 0.04)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < microParticles.length; i++) {
+      for (let j = i + 1; j < microParticles.length; j++) {
+        const a = microParticles[i];
+        const b = microParticles[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < maxDist) {
+          const alpha = 0.04 * (1 - dist / maxDist);
+          ctx.strokeStyle = `rgba(0, 191, 255, ${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  // --- LIGHT RAYS ---
+  function drawLightRays(time) {
+    const centerX = W * 0.65;
+    const centerY = H * 0.45;
+    const rayCount = 6;
+    for (let i = 0; i < rayCount; i++) {
+      const angle = (Math.PI * 2 / rayCount) * i + time * 0.0001;
+      const length = rand(200, 400);
+      const gradient = ctx.createLinearGradient(
+        centerX, centerY,
+        centerX + Math.cos(angle) * length,
+        centerY + Math.sin(angle) * length
+      );
+      gradient.addColorStop(0, 'rgba(0, 191, 255, 0.02)');
+      gradient.addColorStop(1, 'rgba(0, 191, 255, 0)');
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(
+        centerX + Math.cos(angle - 0.08) * length,
+        centerY + Math.sin(angle - 0.08) * length
+      );
+      ctx.lineTo(
+        centerX + Math.cos(angle + 0.08) * length,
+        centerY + Math.sin(angle + 0.08) * length
+      );
+      ctx.closePath();
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    }
+  }
+
+  // --- ANIMATION LOOP ---
+  function animate(time) {
     ctx.clearRect(0, 0, W, H);
-    particles.forEach(p => {
-      updateParticle(p);
-      drawParticle(p);
+
+    // Light rays from orb area
+    drawLightRays(time);
+
+    // Energy plasma particles
+    energyParticles.forEach(p => {
+      updateEnergy(p);
+      drawEnergy(p);
     });
+
+    // Micro floating particles
+    microParticles.forEach(p => {
+      updateMicro(p);
+      drawMicro(p);
+    });
+
+    // Network connections
+    drawNetworkLines();
+
     requestAnimationFrame(animate);
   }
 
-  animate();
+  requestAnimationFrame(animate);
 })();
 
 // ============================================
@@ -114,7 +221,12 @@ const floatingButtons = document.getElementById('floatingButtons');
   const el = document.getElementById('typewriter');
   if (!el) return;
 
-  const words = ['AI Voice Agents', 'Web Systems', 'Smart Automations', 'Business Growth'];
+  const words = [
+    'AI Voice Agents',
+    'Automation Systems',
+    'High-Converting Websites',
+    'Digital Experiences'
+  ];
   let wordIndex = 0;
   let charIndex = 0;
   let isDeleting = false;
@@ -126,16 +238,15 @@ const floatingButtons = document.getElementById('floatingButtons');
     if (isDeleting) {
       el.textContent = currentWord.substring(0, charIndex - 1);
       charIndex--;
-      delay = 60;
+      delay = 50;
     } else {
       el.textContent = currentWord.substring(0, charIndex + 1);
       charIndex++;
-      delay = 110;
+      delay = 100;
     }
 
     if (!isDeleting && charIndex === currentWord.length) {
-      // Pause at full word
-      delay = 1800;
+      delay = 2000;
       isDeleting = true;
     } else if (isDeleting && charIndex === 0) {
       isDeleting = false;
@@ -147,54 +258,6 @@ const floatingButtons = document.getElementById('floatingButtons');
   }
 
   setTimeout(type, 800);
-})();
-
-// ============================================
-// ANIMATED COUNTER (count-up on scroll)
-// ============================================
-(function initCounters() {
-  const counters = document.querySelectorAll('.stat-number[data-target]');
-  if (!counters.length) return;
-
-  let triggered = false;
-
-  function animateCounters() {
-    counters.forEach(counter => {
-      const target = parseInt(counter.dataset.target, 10);
-      const suffix = counter.dataset.suffix || '';
-      const duration = 1800;
-      const step = target / (duration / 16);
-      let current = 0;
-
-      const timer = setInterval(() => {
-        current += step;
-        if (current >= target) {
-          current = target;
-          clearInterval(timer);
-        }
-        counter.textContent = Math.floor(current) + suffix;
-      }, 16);
-    });
-    triggered = true;
-  }
-
-  // Use IntersectionObserver for the stats block
-  const statsBlock = document.querySelector('.hero-stats');
-  if (!statsBlock) return;
-
-  const counterObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !triggered) {
-          animateCounters();
-          counterObserver.disconnect();
-        }
-      });
-    },
-    { threshold: 0.5 }
-  );
-
-  counterObserver.observe(statsBlock);
 })();
 
 // ============================================
@@ -389,6 +452,6 @@ navMenu.addEventListener('keydown', (e) => {
 // ============================================
 // CONSOLE MESSAGE
 // ============================================
-console.log('%c👋 Welcome to Raushan Dubey\'s Portfolio!', 'font-size: 20px; font-weight: bold; color: #8b00ff;');
-console.log('%cBuilt with ❤️ using HTML, CSS & JavaScript', 'font-size: 14px; color: #cc44ff;');
-console.log('%cInterested in working together? Chat on WhatsApp!', 'font-size: 12px; color: #A1A1AA;');
+console.log('%c⚡ Welcome to Raushan Dubey\'s AI Portfolio!', 'font-size: 20px; font-weight: bold; color: #00BFFF;');
+console.log('%cBuilt with ❤️ using HTML, CSS & JavaScript', 'font-size: 14px; color: #2563EB;');
+console.log('%cInterested in working together? Chat on WhatsApp!', 'font-size: 12px; color: #94A3B8;');
