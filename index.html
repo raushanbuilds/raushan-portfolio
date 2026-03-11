@@ -4,722 +4,427 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- SEO Meta Tags -->
-  <title>Raushan Dubey - Web &amp; AI Systems | AI Voice Agents &amp; Automation Expert</title>
+  <title>RealAgent.ai — AI Systems for Real Estate Agents</title>
   <meta name="description"
-    content="Raushan Dubey builds modern websites, AI voice agents, and intelligent automation systems. Helping businesses grow with web design and AI-driven solutions.">
-  <meta name="keywords"
-    content="web design, AI voice agents, automation systems, business automation, web development, AI solutions, Raushan Dubey">
-  <meta name="author" content="Raushan Dubey">
-  <meta name="robots" content="index, follow">
-
-  <!-- Open Graph / Social Media Meta Tags -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Raushan Dubey - Web &amp; AI Systems Builder">
-  <meta property="og:description"
-    content="Building modern websites, AI voice agents, and smart automation systems for business growth.">
-  <meta property="og:url" content="">
-  <meta property="og:site_name" content="Raushan Dubey - Web &amp; AI Systems">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Raushan Dubey - Web &amp; AI Systems">
-  <meta name="twitter:description" content="Web Design | AI Voice Agents | Smart Automations">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-
-  <!-- Google Fonts - Space Grotesk + Inter -->
+    content="RealAgent.ai builds AI voice agents, WhatsApp bots & smart automation exclusively for real estate agents. Close more deals while you sleep.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
-
-  <!-- Font Awesome for social icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <!-- Stylesheet -->
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Structured Data / Schema.org -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Raushan Dubey",
-    "jobTitle": "Web & AI Systems Builder",
-    "description": "Expert in Web Design, AI Voice Agents, and Business Automation Systems",
-    "url": "",
-    "sameAs": [
-      "https://instagram.com/raushandubay",
-      "https://x.com/MrRaushandubey",
-      "https://www.linkedin.com/in/raushan-dubey-8996543a2",
-      "https://wa.me/917061409529"
-    ],
-    "knowsAbout": ["Web Design", "AI Voice Agents", "AI Automation", "Business Process Automation"],
-    "telephone": "+917061409529"
-  }
-  </script>
 </head>
 
 <body>
 
-  <!-- ============================================
-       NAVIGATION
-       ============================================ -->
-  <nav id="navbar" class="navbar">
-    <div class="container">
-      <div class="nav-content">
-        <div class="nav-logo">
-          <a href="#home">
-            <span class="logo-text">RD</span>
-            <span class="logo-full">Raushan Dubey</span>
-          </a>
-        </div>
+  <!-- CUSTOM CURSOR -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <canvas id="particleCanvas"></canvas>
 
-        <ul class="nav-menu" id="navMenu">
-          <li><a href="#home" class="nav-link active">Home</a></li>
-          <li><a href="#about" class="nav-link">About</a></li>
-          <li><a href="#services" class="nav-link">Services</a></li>
-          <li><a href="#work" class="nav-link">Work</a></li>
-          <li><a href="#testimonials" class="nav-link">Reviews</a></li>
-          <li><a href="#contact" class="nav-link">Contact</a></li>
-        </ul>
-
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
+  <!-- NAVIGATION -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-logo">RealAgent<span class="logo-ai">.ai</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#hero">Home</a>
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-right">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="https://wa.me/917061409529?text=Hi%20RealAgent.ai,%20I%20want%20a%20free%20strategy%20call!"
+        target="_blank" class="nav-cta">Free Strategy Call</a>
     </div>
   </nav>
 
-  <!-- ============================================
-       HERO SECTION — Ultra Premium
-       ============================================ -->
-  <section id="home" class="hero">
-    <!-- Plasma Energy Canvas Background -->
-    <canvas id="plasmaCanvas" class="hero-canvas"></canvas>
+  <!-- HERO SECTION -->
+  <section class="hero" id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
 
-    <div class="hero-background">
-      <div class="gradient-orb orb-1"></div>
-      <div class="gradient-orb orb-2"></div>
-      <div class="gradient-orb orb-3"></div>
-    </div>
+    <div class="hero-content">
+      <div class="hero-badge reveal-item">
+        <span class="pulse-dot"></span>
+        Available for Real Estate Projects
+      </div>
 
-    <div class="container">
-      <div class="hero-content">
+      <h1 class="hero-headline reveal-item">
+        Never Miss a<br>
+        <span class="gradient-text">Real Estate Lead</span><br>
+        Again — Ever.
+      </h1>
 
-        <!-- LEFT COLUMN — Text -->
-        <div class="hero-text">
-          <div class="hero-badge reveal">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-            <span>Trusted by Growing Businesses</span>
-          </div>
+      <p class="hero-sub reveal-item">
+        I build AI voice agents, WhatsApp bots &amp; smart automation for real estate agents — so you close more deals
+        while you sleep.
+      </p>
 
-          <h1 class="hero-title reveal">
-            I Build <span class="text-gradient">AI Systems</span> &amp;<br>
-            <span class="text-gradient">Digital Experiences</span> That<br>
-            Scale Businesses
-          </h1>
+      <div class="hero-offer reveal-item">
+        🎁 First 2 real estate clients get FREE setup — limited spots only
+      </div>
 
-          <p class="hero-subtitle reveal">
-            <span class="typewriter-wrap"><span id="typewriter" class="typewriter-text"></span><span
-                class="typewriter-cursor">|</span></span><br>
-            Built to Generate Real Revenue.
-          </p>
+      <div class="hero-ctas reveal-item">
+        <a href="https://wa.me/917061409529?text=Hi%20RealAgent.ai,%20I%20want%20a%20free%20strategy%20call!"
+          target="_blank" class="btn-primary">💬 Get Free Strategy Call</a>
+        <a href="#work" class="btn-secondary">View Demo Projects →</a>
+      </div>
 
-          <div class="hero-cta reveal">
-            <a href="https://wa.me/917061409529?text=Hi%20Raushan%2C%20I%20want%20a%20free%20strategy%20call!"
-              class="btn btn-glow btn-lg" target="_blank" rel="noopener" id="cta-strategy">
-              Get Free Strategy Call
-            </a>
-            <a href="#work" class="btn btn-secondary btn-lg" id="cta-work">
-              View My Work
-            </a>
-          </div>
-
-          <div class="hero-pricing-hint reveal">
-            <span>💰</span> Starting from <strong>$200</strong>
-          </div>
-
-          <!-- Minimal Client Logos -->
-          <div class="hero-clients reveal">
-            <p class="hero-clients-label">Trusted Partners</p>
-            <div class="hero-clients-logos">
-              <span class="client-logo">TECHVAULT</span>
-              <span class="client-logo">GROWTHX</span>
-              <span class="client-logo">NEXAFLOW</span>
-              <span class="client-logo">COREBYTE</span>
-            </div>
-          </div>
-
-          <!-- Social Icons — Redesigned -->
-          <div class="hero-social reveal">
-            <a href="https://www.linkedin.com/in/raushan-dubey-8996543a2" class="social-icon" target="_blank"
-              rel="noopener" aria-label="LinkedIn">
-              <i class="fa-brands fa-linkedin-in"></i>
-            </a>
-            <a href="https://instagram.com/raushandubay" class="social-icon" target="_blank" rel="noopener"
-              aria-label="Instagram">
-              <i class="fa-brands fa-instagram"></i>
-            </a>
-            <a href="https://x.com/MrRaushandubey" class="social-icon" target="_blank" rel="noopener"
-              aria-label="Twitter/X">
-              <i class="fa-brands fa-x-twitter"></i>
-            </a>
-            <a href="https://wa.me/917061409529" class="social-icon" target="_blank" rel="noopener"
-              aria-label="WhatsApp">
-              <i class="fa-brands fa-whatsapp"></i>
-            </a>
-          </div>
+      <div class="hero-stats reveal-item">
+        <div class="stat">
+          <span class="stat-num">24/7</span>
+          <span class="stat-label">Lead Response</span>
         </div>
-
-        <!-- RIGHT COLUMN — AI Orb Visual -->
-        <div class="hero-visual">
-          <div class="orb-glow"></div>
-          <div class="ai-orb-container">
-            <div class="ai-orb"></div>
-            <div class="orb-ring-3"></div>
-          </div>
-
-          <!-- Floating Micro UI Elements -->
-          <div class="micro-ui micro-code">&lt;/&gt;</div>
-          <div class="micro-ui micro-waveform">
-            <svg viewBox="0 0 80 30" fill="none" stroke="rgba(0,191,255,0.5)" stroke-width="1.5">
-              <polyline points="0,15 8,8 16,20 24,5 32,25 40,12 48,18 56,7 64,22 72,10 80,15" />
-            </svg>
-          </div>
-          <div class="micro-ui micro-network">
-            <svg viewBox="0 0 60 60" fill="none">
-              <circle cx="10" cy="10" r="3" fill="rgba(0,191,255,0.4)" />
-              <circle cx="50" cy="15" r="2.5" fill="rgba(0,191,255,0.3)" />
-              <circle cx="30" cy="50" r="3" fill="rgba(0,191,255,0.35)" />
-              <circle cx="45" cy="45" r="2" fill="rgba(0,191,255,0.25)" />
-              <line x1="10" y1="10" x2="50" y2="15" stroke="rgba(0,191,255,0.15)" stroke-width="1" />
-              <line x1="50" y1="15" x2="30" y2="50" stroke="rgba(0,191,255,0.12)" stroke-width="1" />
-              <line x1="10" y1="10" x2="30" y2="50" stroke="rgba(0,191,255,0.12)" stroke-width="1" />
-              <line x1="45" y1="45" x2="30" y2="50" stroke="rgba(0,191,255,0.1)" stroke-width="1" />
-              <line x1="45" y1="45" x2="50" y2="15" stroke="rgba(0,191,255,0.1)" stroke-width="1" />
-            </svg>
-          </div>
-          <div class="micro-ui micro-bracket-left">{ }</div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">₹5K</span>
+          <span class="stat-label">Starting Price</span>
         </div>
-
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">48hr</span>
+          <span class="stat-label">Delivery</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Lead Coverage</span>
+        </div>
       </div>
     </div>
 
-    <!-- Scroll Indicator -->
-    <div class="hero-scroll">
-      <a href="#about" class="scroll-indicator">
-        <span>Scroll</span>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-      </a>
+    <div class="scroll-indicator reveal-item">
+      <div class="scroll-line"></div>
+      <span class="scroll-text">SCROLL</span>
     </div>
   </section>
 
-  <!-- ============================================
-       ABOUT SECTION
-       ============================================ -->
-  <section id="about" class="about-section">
+  <!-- MARQUEE TICKER -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <span class="marquee-content">AI Voice Agents <span class="sep">✦</span> WhatsApp Automation <span
+          class="sep">✦</span> Lead Follow-Up Bots <span class="sep">✦</span> Site Visit Booking <span
+          class="sep">✦</span> Real Estate AI Systems <span class="sep">✦</span> Business Automation <span
+          class="sep">✦</span> 24/7 AI Receptionist <span class="sep">✦</span> Property Info Bots <span
+          class="sep">✦</span></span>
+      <span class="marquee-content">AI Voice Agents <span class="sep">✦</span> WhatsApp Automation <span
+          class="sep">✦</span> Lead Follow-Up Bots <span class="sep">✦</span> Site Visit Booking <span
+          class="sep">✦</span> Real Estate AI Systems <span class="sep">✦</span> Business Automation <span
+          class="sep">✦</span> 24/7 AI Receptionist <span class="sep">✦</span> Property Info Bots <span
+          class="sep">✦</span></span>
+    </div>
+  </div>
+
+  <!-- SERVICES SECTION -->
+  <section class="services" id="services">
     <div class="container">
-      <h2 class="section-title reveal">About Me</h2>
-      <p class="section-subtitle reveal">Solving Real Business Problems with Web &amp; AI</p>
-
-      <div class="about-wrapper reveal">
-        <!-- Left Side - Text Content -->
-        <div class="about-text-column">
-          <p>
-            Hi, I'm <strong>Raushan Dubey</strong> — a Web &amp; AI Systems Builder passionate about helping businesses
-            thrive in the digital age.
-          </p>
-          <p>
-            I specialize in creating <strong>modern, high-converting websites</strong>, building <strong>intelligent AI
-              voice agents</strong> that handle customer interactions 24/7, and designing <strong>smart automation
-              systems</strong> that streamline business operations.
-          </p>
-          <p>
-            My approach is simple: understand your business challenges, design the right solution, and deliver results
-            that drive growth. Whether you need a stunning website, an AI assistant to handle calls, or automated
-            workflows to save time — I've got you covered.
-          </p>
-          <p>
-            Let's build something amazing together.
-          </p>
-
-          <div class="about-skills">
-            <div class="skill-badge">Web Design</div>
-            <div class="skill-badge">AI Voice Agents</div>
-            <div class="skill-badge">Automation</div>
-            <div class="skill-badge">UI/UX Design</div>
-            <div class="skill-badge">Business Growth</div>
-            <div class="skill-badge">AI Systems</div>
-          </div>
-
-          <!-- About Section Social Links -->
-          <div class="about-social">
-            <a href="https://www.linkedin.com/in/raushan-dubey-8996543a2" class="social-icon" target="_blank"
-              rel="noopener" aria-label="LinkedIn">
-              <i class="fa-brands fa-linkedin-in"></i>
-            </a>
-            <a href="https://instagram.com/raushandubay" class="social-icon" target="_blank" rel="noopener"
-              aria-label="Instagram">
-              <i class="fa-brands fa-instagram"></i>
-            </a>
-            <a href="https://x.com/MrRaushandubey" class="social-icon" target="_blank" rel="noopener"
-              aria-label="Twitter/X">
-              <i class="fa-brands fa-x-twitter"></i>
-            </a>
-            <a href="https://wa.me/917061409529" class="social-icon" target="_blank" rel="noopener"
-              aria-label="WhatsApp">
-              <i class="fa-brands fa-whatsapp"></i>
-            </a>
-          </div>
-        </div>
-
-        <!-- Right Side - Profile Image -->
-        <div class="about-image-column">
-          <div class="profile-card">
-            <div class="profile-image">
-              <img src="raushan.jpg.jpeg" alt="Raushan Dubey - Web &amp; AI Systems Builder">
-            </div>
-            <div class="profile-info">
-              <h3 class="profile-name">Raushan Dubey</h3>
-              <p class="profile-title">Founder of AgentBolt</p>
-            </div>
-          </div>
-        </div>
+      <div class="section-header reveal-item">
+        <span class="section-label"><span class="label-line"></span>WHAT I BUILD</span>
+        <h2>AI Solutions Built for Real Estate Success</h2>
+        <p class="section-sub">Every service solves a real daily problem for real estate agents.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ============================================
-       SERVICES SECTION
-       ============================================ -->
-  <section id="services" class="services-section">
-    <div class="container">
-      <h2 class="section-title reveal">Services</h2>
-      <p class="section-subtitle reveal">Comprehensive Web &amp; AI Solutions for Your Business</p>
 
       <div class="services-grid">
-
-        <!-- Service 1 -->
-        <div class="card service-card reveal">
-          <div class="card-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-            </svg>
-          </div>
-          <h3 class="card-title">Web Design &amp; Development</h3>
-          <p class="card-description">
-            Modern, responsive websites that convert visitors into customers. Fast, SEO-friendly, and built with the
-            latest technologies to give your business a professional online presence.
-          </p>
+        <div class="service-card reveal-item">
+          <div class="service-icon">🤖</div>
+          <h3>AI Voice Agent</h3>
+          <p>Handles property calls 24/7. Qualifies leads, books site visits — no human needed.</p>
+          <span class="service-tag tag-purple">Most Popular</span>
         </div>
-
-        <!-- Service 2 -->
-        <div class="card service-card reveal">
-          <div class="card-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M12 2a4 4 0 00-4 4v1H7a2 2 0 00-2 2v11a2 2 0 002 2h10a2 2 0 002-2V9a2 2 0 00-2-2h-1V6a4 4 0 00-4-4z"
-                stroke="currentColor" stroke-width="2" />
-              <circle cx="12" cy="15" r="1" fill="currentColor" />
-              <path d="M12 13v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </svg>
-          </div>
-          <h3 class="card-title">AI Voice Agent Building</h3>
-          <p class="card-description">
-            Intelligent AI voice assistants that handle customer calls, answer questions, book appointments, and qualify
-            leads 24/7 — giving you more time to focus on growing your business.
-          </p>
+        <div class="service-card reveal-item">
+          <div class="service-icon">💬</div>
+          <h3>WhatsApp AI Agent</h3>
+          <p>Auto-responds to inquiries, shares listings, captures leads and books appointments 24/7.</p>
+          <span class="service-tag tag-green">NEW</span>
         </div>
-
-        <!-- Service 3 -->
-        <div class="card service-card reveal">
-          <div class="card-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-            </svg>
-          </div>
-          <h3 class="card-title">AI Automation Systems</h3>
-          <p class="card-description">
-            Smart automation solutions powered by AI to handle repetitive tasks, process data, manage workflows, and
-            make intelligent decisions — boosting efficiency and reducing costs.
-          </p>
+        <div class="service-card reveal-item">
+          <div class="service-icon">🌐</div>
+          <h3>Web Design &amp; Development</h3>
+          <p>Fast, conversion-focused property websites. Built to turn visitors into booked site visits.</p>
+          <span class="service-tag tag-cyan">High Converting</span>
         </div>
-
-        <!-- Service 4 -->
-        <div class="card service-card reveal">
-          <div class="card-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
-              <path d="M12 1v6m0 6v6M1 12h6m6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-              <path d="M4.93 4.93l4.24 4.24m5.66 5.66l4.24 4.24M19.07 4.93l-4.24 4.24m-5.66 5.66l-4.24 4.24"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </svg>
-          </div>
-          <h3 class="card-title">Business Process Automation</h3>
-          <p class="card-description">
-            End-to-end automation of your business processes — from lead generation and customer onboarding to invoicing
-            and reporting. Save time, reduce errors, and scale faster.
-          </p>
+        <div class="service-card reveal-item">
+          <div class="service-icon">⚡</div>
+          <h3>Lead Follow-Up Automation</h3>
+          <p>Every lead followed up in 60 seconds — even at 2AM. Zero manual effort.</p>
+          <span class="service-tag tag-green-border">Zero Missed Leads</span>
         </div>
-
+        <div class="service-card reveal-item">
+          <div class="service-icon">📅</div>
+          <h3>Site Visit Booking System</h3>
+          <p>Clients self-book visits from WhatsApp or website. Auto-syncs to your calendar.</p>
+          <span class="service-tag tag-purple">Time Saver</span>
+        </div>
+        <div class="service-card reveal-item">
+          <div class="service-icon">🔄</div>
+          <h3>Business Process Automation</h3>
+          <p>Invoicing, onboarding, reporting — all automated. Save 20+ hours every week.</p>
+          <span class="service-tag tag-cyan">Efficiency Boost</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ============================================
-       WORK / PORTFOLIO SECTION
-       ============================================ -->
-  <section id="work" class="work-section">
+  <!-- ABOUT / FOUNDER SECTION -->
+  <section class="about" id="about">
     <div class="container">
-      <h2 class="section-title reveal">My Work</h2>
-      <p class="section-subtitle reveal">Building Solutions That Drive Real Results</p>
-
-      <div class="work-showcase">
-
-        <!-- Work Item 1 -->
-        <div class="work-item reveal">
-          <div class="work-thumbnail"
-            style="background: linear-gradient(135deg, #05101f 0%, #0a2540 50%, #0055aa 100%);">
-            <div class="work-thumbnail-icon">💼</div>
-            <div class="work-thumbnail-lines">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
+      <div class="about-grid">
+        <div class="about-photo reveal-item">
+          <div class="photo-wrapper">
+            <img src="https://raushandubey-portfolio.vercel.app/raushan.jpg.jpeg"
+              alt="Raushan Dubey — Founder of RealAgent.ai" loading="lazy">
           </div>
-          <div class="work-item-body">
-            <h3 class="work-title">Modern Business Websites</h3>
-            <p class="work-description">
-              Created stunning, conversion-focused websites for local businesses and startups. Every site is designed to
-              attract customers, build trust, and drive sales with clean UI and fast performance.
-            </p>
-            <a href="https://wa.me/917061409529?text=Hi%2C%20I%20want%20to%20see%20your%20website%20projects!"
-              class="btn btn-outline-blue btn-sm" target="_blank" rel="noopener">
-              View Project <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            </a>
+          <div class="float-badge float-badge-br">
+            <span class="badge-big">48h</span>
+            <span class="badge-small">Avg. Delivery</span>
+          </div>
+          <div class="float-badge float-badge-tl">
+            <span class="pulse-dot pulse-dot-green"></span>
+            <span class="badge-available">Available Now</span>
           </div>
         </div>
 
-        <!-- Work Item 2 -->
-        <div class="work-item reveal">
-          <div class="work-thumbnail"
-            style="background: linear-gradient(135deg, #001a33 0%, #003080 50%, #0055ff 100%);">
-            <div class="work-thumbnail-icon">🤖</div>
-            <div class="work-thumbnail-lines">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-          <div class="work-item-body">
-            <h3 class="work-title">AI Voice Assistants</h3>
-            <p class="work-description">
-              Built AI voice agents for service businesses that handle appointment bookings, answer FAQs, and qualify
-              leads automatically — improving customer experience while reducing costs.
-            </p>
-            <a href="https://wa.me/917061409529?text=Hi%2C%20I%20want%20to%20see%20your%20AI%20voice%20agent%20projects!"
-              class="btn btn-outline-blue btn-sm" target="_blank" rel="noopener">
-              View Project <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            </a>
-          </div>
-        </div>
+        <div class="about-text reveal-item">
+          <span class="section-label"><span class="label-line"></span>ABOUT ME</span>
+          <h2>I Solve Real Problems. Not Just Build Websites.</h2>
+          <p>Hi, I'm Raushan Dubey — Founder of RealAgent.ai. I build AI systems exclusively for real estate businesses.
+            My focus: understand your challenge, build the right solution, drive real revenue.</p>
+          <p>Whether you're a solo agent missing leads or a growing agency drowning in manual tasks — I build the exact
+            AI system you need.</p>
 
-        <!-- Work Item 3 -->
-        <div class="work-item reveal">
-          <div class="work-thumbnail"
-            style="background: linear-gradient(135deg, #001a1a 0%, #003333 50%, #00aa88 100%);">
-            <div class="work-thumbnail-icon">⚡</div>
-            <div class="work-thumbnail-lines">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
+          <div class="skills-tags">
+            <span class="skill-tag">AI Voice Agents</span>
+            <span class="skill-tag">WhatsApp Bots</span>
+            <span class="skill-tag">n8n</span>
+            <span class="skill-tag">Zapier</span>
+            <span class="skill-tag">Vapi / Bland AI</span>
+            <span class="skill-tag">Web Dev</span>
+            <span class="skill-tag">Real Estate AI</span>
+            <span class="skill-tag">Lead Automation</span>
           </div>
-          <div class="work-item-body">
-            <h3 class="work-title">Smart Automation Workflows</h3>
-            <p class="work-description">
-              Designed intelligent automation systems that connect apps, process data, send notifications, and manage
-              operations — helping businesses save hours of manual work every week.
-            </p>
-            <a href="https://wa.me/917061409529?text=Hi%2C%20I%20want%20to%20see%20your%20automation%20projects!"
-              class="btn btn-outline-blue btn-sm" target="_blank" rel="noopener">
-              View Project <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            </a>
-          </div>
-        </div>
 
+          <a href="https://wa.me/917061409529?text=Hi%20RealAgent.ai,%20let's%20talk!" target="_blank"
+            class="btn-primary" style="margin-top:2rem;">Let's Talk →</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ============================================
-       WHY CHOOSE ME SECTION
-       ============================================ -->
-  <section id="why-choose" class="why-section">
+  <!-- TOOLS / INTEGRATIONS STRIP -->
+  <section class="tools-strip" id="tools">
     <div class="container">
-      <h2 class="section-title reveal">Why Choose Me</h2>
-      <p class="section-subtitle reveal">Your Success Is My Priority</p>
-
-      <div class="grid grid-3 why-grid">
-
-        <div class="why-item reveal">
-          <div class="why-icon">⚡</div>
-          <h4>Fast Project Delivery</h4>
-          <p>Quick turnaround times without compromising on quality. Your project delivered on time, every time.</p>
-        </div>
-
-        <div class="why-item reveal">
-          <div class="why-icon">🎨</div>
-          <h4>Modern UI/UX</h4>
-          <p>Beautiful, intuitive designs that users love. Premium aesthetics that set your brand apart.</p>
-        </div>
-
-        <div class="why-item reveal">
-          <div class="why-icon">🧠</div>
-          <h4>AI-Driven Solutions</h4>
-          <p>Leverage cutting-edge AI technology to automate, optimize, and scale your business operations.</p>
-        </div>
-
-        <div class="why-item reveal">
-          <div class="why-icon">🔧</div>
-          <h4>Automation-Focused</h4>
-          <p>Build systems that work for you 24/7. Reduce manual work and focus on what matters most.</p>
-        </div>
-
-        <div class="why-item reveal">
-          <div class="why-icon">📈</div>
-          <h4>Business Growth Oriented</h4>
-          <p>Every solution is designed with your growth in mind. More leads, more sales, more success.</p>
-        </div>
-
-        <div class="why-item reveal">
-          <div class="why-icon">🤝</div>
-          <h4>Dedicated Support</h4>
-          <p>Direct communication and ongoing support. I'm here to help you succeed every step of the way.</p>
-        </div>
-
+      <div class="section-header reveal-item">
+        <h2>Powered by Leading AI Tools</h2>
+        <p class="section-sub">I connect the best tools to build your system.</p>
+      </div>
+    </div>
+    <div class="tools-marquee">
+      <div class="tools-track">
+        <span class="tool-pill">Make.com</span>
+        <span class="tool-pill">n8n</span>
+        <span class="tool-pill">Zapier</span>
+        <span class="tool-pill">Vapi</span>
+        <span class="tool-pill">Bland AI</span>
+        <span class="tool-pill">OpenAI</span>
+        <span class="tool-pill">WhatsApp API</span>
+        <span class="tool-pill">Calendly</span>
+        <span class="tool-pill">Twilio</span>
+        <span class="tool-pill">Google Calendar</span>
+        <span class="tool-pill">Make.com</span>
+        <span class="tool-pill">n8n</span>
+        <span class="tool-pill">Zapier</span>
+        <span class="tool-pill">Vapi</span>
+        <span class="tool-pill">Bland AI</span>
+        <span class="tool-pill">OpenAI</span>
+        <span class="tool-pill">WhatsApp API</span>
+        <span class="tool-pill">Calendly</span>
+        <span class="tool-pill">Twilio</span>
+        <span class="tool-pill">Google Calendar</span>
       </div>
     </div>
   </section>
 
-  <!-- ============================================
-       TESTIMONIALS SECTION
-       ============================================ -->
-  <section id="testimonials" class="testimonials-section">
+  <!-- PORTFOLIO SECTION -->
+  <section class="portfolio" id="work">
     <div class="container">
-      <h2 class="section-title reveal">What Clients Say</h2>
-      <p class="section-subtitle reveal">Real Results, Real Feedback</p>
+      <div class="section-header reveal-item">
+        <span class="section-label"><span class="label-line"></span>PORTFOLIO</span>
+        <h2>Demo Projects &amp; Real Solutions</h2>
+        <p class="section-sub">Working demos — see exactly what I build.</p>
+      </div>
+
+      <div class="portfolio-grid">
+        <div class="portfolio-card reveal-item">
+          <div class="portfolio-thumb portfolio-thumb-purple">
+            <span class="portfolio-emoji">🤖</span>
+          </div>
+          <div class="portfolio-info">
+            <h3>AI WhatsApp Bot — Sharma Properties</h3>
+            <p>Property inquiries answered &amp; site visits booked automatically on WhatsApp.</p>
+            <a href="https://wa.me/917061409529?text=Hi%20RealAgent.ai,%20show%20me%20the%20WhatsApp%20bot%20demo!"
+              target="_blank" class="portfolio-link">View Live Demo →</a>
+          </div>
+        </div>
+        <div class="portfolio-card reveal-item">
+          <div class="portfolio-thumb portfolio-thumb-cyan">
+            <span class="portfolio-emoji">📞</span>
+          </div>
+          <div class="portfolio-info">
+            <h3>AI Voice Agent — Property Inquiry Handler</h3>
+            <p>Picks up calls, answers FAQs, schedules visits — zero human involvement.</p>
+            <a href="https://wa.me/917061409529?text=Hi%20RealAgent.ai,%20I%20want%20to%20hear%20the%20voice%20agent%20demo!"
+              target="_blank" class="portfolio-link">Hear Demo Call →</a>
+          </div>
+        </div>
+        <div class="portfolio-card reveal-item">
+          <div class="portfolio-thumb portfolio-thumb-green">
+            <span class="portfolio-emoji">⚡</span>
+          </div>
+          <div class="portfolio-info">
+            <h3>Lead Follow-Up Automation System</h3>
+            <p>Follows up every new lead in 60 seconds, even at 2AM. Fully automated.</p>
+            <a href="https://wa.me/917061409529?text=Hi%20RealAgent.ai,%20show%20me%20the%20lead%20automation%20demo!"
+              target="_blank" class="portfolio-link">See How It Works →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS SECTION -->
+  <section class="testimonials" id="reviews">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-label"><span class="label-line"></span>SOCIAL PROOF</span>
+        <h2>What Clients Say</h2>
+      </div>
 
       <div class="testimonials-grid">
-
-        <!-- Testimonial 1 -->
-        <div class="testimonial-card reveal">
-          <div class="testimonial-stars">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-          </div>
-          <p class="testimonial-text">
-            "Raushan built us a stunning website in just 5 days. Our online inquiries doubled within a month. Absolutely
-            professional work and amazing communication throughout the project!"
-          </p>
+        <div class="testimonial-card reveal-item">
+          <span class="testimonial-deco">"</span>
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Raushan built us a stunning website in 5 days. Our online inquiries doubled
+            within the first month."</p>
           <div class="testimonial-author">
-            <div class="author-avatar">AK</div>
-            <div class="author-info">
-              <h4 class="author-name">Amit Kumar</h4>
-              <p class="author-role">Owner, AK Electronics Store</p>
+            <div class="author-avatar" style="background:linear-gradient(135deg,#7c3aed,#06b6d4)">AK</div>
+            <div>
+              <span class="author-name">Amit Kumar</span>
+              <span class="author-role">Owner, AK Electronics Store</span>
             </div>
           </div>
         </div>
-
-        <!-- Testimonial 2 -->
-        <div class="testimonial-card reveal">
-          <div class="testimonial-stars">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-          </div>
-          <p class="testimonial-text">
-            "The AI voice agent Raushan created for my clinic is incredible. It handles appointment bookings 24/7
-            without any human involvement. It's like having a virtual receptionist that never sleeps!"
-          </p>
+        <div class="testimonial-card reveal-item">
+          <span class="testimonial-deco">"</span>
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"The AI voice agent handles appointment bookings 24/7 with zero human
+            involvement. Like a receptionist that never sleeps."</p>
           <div class="testimonial-author">
-            <div class="author-avatar">PS</div>
-            <div class="author-info">
-              <h4 class="author-name">Dr. Priya Singh</h4>
-              <p class="author-role">Founder, HealthFirst Clinic</p>
+            <div class="author-avatar" style="background:linear-gradient(135deg,#06b6d4,#10b981)">PS</div>
+            <div>
+              <span class="author-name">Dr. Priya Singh</span>
+              <span class="author-role">Founder, HealthFirst Clinic</span>
             </div>
           </div>
         </div>
-
-        <!-- Testimonial 3 -->
-        <div class="testimonial-card reveal">
-          <div class="testimonial-stars">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-          </div>
-          <p class="testimonial-text">
-            "The automation system he built saves us 20+ hours every week. Lead follow-ups, invoice reminders, and
-            client onboarding — all automated! Best investment we made for our business."
-          </p>
+        <div class="testimonial-card reveal-item">
+          <span class="testimonial-deco">"</span>
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"The automation system saves us 20+ hours weekly. Lead follow-ups, invoices,
+            onboarding — all done."</p>
           <div class="testimonial-author">
-            <div class="author-avatar">RV</div>
-            <div class="author-info">
-              <h4 class="author-name">Rahul Verma</h4>
-              <p class="author-role">CEO, GrowthEdge Solutions</p>
+            <div class="author-avatar" style="background:linear-gradient(135deg,#7c3aed,#10b981)">RV</div>
+            <div>
+              <span class="author-name">Rahul Verma</span>
+              <span class="author-role">CEO, GrowthEdge Solutions</span>
             </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================
-       PRICING HINT + CONTACT / CTA SECTION
-       ============================================ -->
-  <section id="contact" class="contact-section">
-    <div class="container container-narrow">
-
-      <!-- Pricing Badge -->
-      <div class="pricing-badge reveal">
-        <span class="pricing-icon">💰</span>
-        <span>Starting From <strong>₹5,000</strong> — Affordable Pricing for Every Business</span>
-      </div>
-
-      <div class="contact-content reveal">
-        <h2 class="contact-title">Ready to Transform Your Business?</h2>
-        <p class="contact-subtitle">
-          Let's discuss how web design, AI voice agents, and smart automation can help you grow. Get in touch today for
-          a free consultation.
-        </p>
-
-        <div class="contact-cta">
-          <a href="https://wa.me/917061409529?text=Hi%20Raushan%2C%20I%20want%20a%20free%20consultation!"
-            class="btn btn-glow btn-lg" target="_blank" rel="noopener">
-            <i class="fa-brands fa-whatsapp"></i>
-            WhatsApp Me
-          </a>
-          <a href="tel:+917061409529" class="btn btn-accent btn-lg">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"
-                fill="currentColor" />
-            </svg>
-            Call Now
-          </a>
-        </div>
-
-        <div class="contact-info">
-          <div class="info-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"
-                fill="currentColor" />
-            </svg>
-            <span>+91 70614 09529</span>
-          </div>
-          <div class="info-item">
-            <i class="fa-brands fa-instagram" style="color:var(--accent-light);font-size:20px;"></i>
-            <a href="https://instagram.com/raushandubay" target="_blank" rel="noopener">@raushandubay</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============================================
-       FOOTER
-       ============================================ -->
-  <footer class="footer">
+  <!-- SOCIAL / CONNECT SECTION -->
+  <section class="social-section" id="contact">
     <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <h3>Raushan Dubey</h3>
-          <p>Web &amp; AI Systems Builder</p>
-        </div>
-
-        <div class="footer-links">
-          <a href="#home">Home</a>
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#work">Work</a>
-          <a href="#testimonials">Reviews</a>
-          <a href="#contact">Contact</a>
-        </div>
-
-        <div class="footer-social">
-          <a href="https://www.linkedin.com/in/raushan-dubey-8996543a2" target="_blank" rel="noopener"
-            aria-label="LinkedIn">
-            <i class="fa-brands fa-linkedin-in"></i>
-          </a>
-          <a href="https://instagram.com/raushandubay" target="_blank" rel="noopener" aria-label="Instagram">
-            <i class="fa-brands fa-instagram"></i>
-          </a>
-          <a href="https://x.com/MrRaushandubey" target="_blank" rel="noopener" aria-label="Twitter/X">
-            <i class="fa-brands fa-x-twitter"></i>
-          </a>
-          <a href="https://wa.me/917061409529" target="_blank" rel="noopener" aria-label="WhatsApp">
-            <i class="fa-brands fa-whatsapp"></i>
-          </a>
-        </div>
+      <div class="section-header reveal-item">
+        <h2>Find Me Everywhere</h2>
+        <p class="section-sub">DM on any platform — I respond within hours.</p>
       </div>
 
-      <div class="footer-bottom">
-        <p>&copy; 2026 Raushan Dubey. All rights reserved. Built with ❤️ &amp; AI</p>
+      <div class="social-buttons reveal-item">
+        <a href="https://wa.me/917061409529" target="_blank" class="social-btn social-whatsapp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+          </svg>
+          WhatsApp
+        </a>
+        <a href="https://instagram.com/raushandubay" target="_blank" class="social-btn social-instagram">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+          </svg>
+          Instagram
+        </a>
+        <a href="https://linkedin.com/in/raushandubey" target="_blank" class="social-btn social-linkedin">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+          </svg>
+          LinkedIn
+        </a>
+        <a href="tel:+917061409529" class="social-btn social-phone">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+          </svg>
+          Call Now
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA BANNER -->
+  <section class="final-cta">
+    <div class="cta-banner">
+      <div class="cta-glow"></div>
+      <div class="cta-content reveal-item">
+        <span class="cta-label">LIMITED OFFER</span>
+        <h2>Ready to Automate Your Real Estate Business?</h2>
+        <p>Get a free 30-min strategy call. I'll show you exactly which AI systems will bring you more leads.</p>
+        <p class="cta-urgency">⚡ Only 2 spots left this month</p>
+        <div class="cta-buttons">
+          <a href="https://wa.me/917061409529?text=Hi%20RealAgent.ai,%20I%20want%20to%20book%20my%20free%20strategy%20call!"
+            target="_blank" class="btn-primary">💬 WhatsApp Me Now</a>
+          <a href="tel:+917061409529" class="btn-secondary">📞 Call Directly</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <a href="#" class="nav-logo">RealAgent<span class="logo-ai">.ai</span></a>
+      </div>
+      <div class="footer-center">
+        <p>© 2026 RealAgent.ai — Raushan Dubey. All rights reserved.</p>
+      </div>
+      <div class="footer-right">
+        <a href="#services">Services</a>
+        <a href="#work">Work</a>
+        <a href="#contact">Contact</a>
       </div>
     </div>
   </footer>
 
-  <!-- ============================================
-       FLOATING ACTION BUTTONS
-       ============================================ -->
-  <div class="floating-buttons" id="floatingButtons">
-    <a href="https://wa.me/917061409529" class="floating-btn whatsapp-btn" target="_blank" rel="noopener"
-      aria-label="WhatsApp">
-      <i class="fa-brands fa-whatsapp" style="font-size:24px;"></i>
-    </a>
-
-    <a href="tel:+917061409529" class="floating-btn call-btn" aria-label="Call">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"
-          fill="currentColor" />
-      </svg>
-    </a>
-  </div>
-
-  <!-- JavaScript -->
   <script src="script.js"></script>
-
 </body>
 
 </html>
