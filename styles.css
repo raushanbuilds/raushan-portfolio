@@ -821,7 +821,8 @@ body.cursor-click .cursor-ring {
     box-shadow: 0 0 60px rgba(124, 58, 237, 0.25);
 }
 
-.photo-wrapper img {
+.photo-wrapper img,
+.photo-wrapper video {
     width: 100%;
     height: 100%;
     object-fit: cover;
