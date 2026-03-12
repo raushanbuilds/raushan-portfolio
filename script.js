@@ -5,27 +5,34 @@
 (function () {
   'use strict';
 
-  // ---- COLORFUL MULTI-COLOR CURSOR TRAIL ----
-  const cursorDot = document.getElementById('cursor-dot');
-  const cursorRing = document.getElementById('cursor-ring');
-  const particles = [];
-  let lastX = -100, lastY = -100;
-  let mouseX = -100, mouseY = -100;
-  let ringX = -100, ringY = -100;
+  // ---- ENHANCED COLORFUL CURSOR TRAIL ----
+  var cursorDot = document.getElementById('cursor-dot');
+  var cursorRing = document.getElementById('cursor-ring');
+  var particles = [];
+  var lastX = -100, lastY = -100;
+  var mouseX = -100, mouseY = -100;
+  var ringX = -100, ringY = -100;
 
-  const colors = ['#ff6b9d','#c44dff','#7c3aed','#06b6d4','#10b981','#fbbf24','#f97316','#3b82f6'];
+  var CURSOR_COLORS = [
+    { r:255, g:107, b:157 },
+    { r:196, g:77,  b:255 },
+    { r:124, g:58,  b:237 },
+    { r:6,   g:182, b:212 },
+    { r:16,  g:185, b:129 },
+    { r:251, g:191, b:36  },
+    { r:249, g:115, b:22  },
+    { r:59,  g:130, b:246 },
+    { r:236, g:72,  b:153 },
+    { r:34,  g:238, b:211 }
+  ];
 
-  function isTouchDevice() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  }
-
-  if (!isTouchDevice() && cursorDot && cursorRing) {
+  if (cursorDot && cursorRing) {
     // Create fullscreen canvas
-    const canvas = document.createElement('canvas');
+    var canvas = document.createElement('canvas');
     canvas.id = 'cursorCanvas';
-    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999999;';
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:999997;';
     document.body.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d');
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -34,35 +41,84 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Mouse move — move dot+ring, spawn trail particles
-    document.addEventListener('mousemove', function (e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      cursorDot.style.left = mouseX + 'px';
-      cursorDot.style.top = mouseY + 'px';
-
-      // Only spawn if moved >3px
-      var dx = mouseX - lastX;
-      var dy = mouseY - lastY;
-      if (Math.sqrt(dx * dx + dy * dy) > 3) {
-        for (var i = 0; i < 3; i++) {
-          particles.push({
-            x: mouseX + (Math.random() - 0.5) * 4,
-            y: mouseY + (Math.random() - 0.5) * 4,
-            size: 4 + Math.random() * 8,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            life: 1,
-            decay: 0.02 + Math.random() * 0.03,
-            vx: (Math.random() - 0.5) * 1.5,
-            vy: (Math.random() - 0.5) * 1.5
-          });
-        }
-        lastX = mouseX;
-        lastY = mouseY;
+    function spawnParticles(x, y, count) {
+      for (var i = 0; i < count; i++) {
+        var c = CURSOR_COLORS[Math.floor(Math.random() * CURSOR_COLORS.length)];
+        particles.push({
+          x: x + (Math.random() - 0.5) * 12,
+          y: y + (Math.random() - 0.5) * 12,
+          vx: (Math.random() - 0.5) * 5,
+          vy: (Math.random() - 0.5) * 5,
+          size: 5 + Math.random() * 9,
+          color: c,
+          life: 1,
+          decay: 0.015 + Math.random() * 0.02
+        });
       }
+    }
+
+    function spawnBurst(x, y) {
+      for (var i = 0; i < 20; i++) {
+        var angle = (Math.PI * 2 / 20) * i;
+        var speed = 3 + Math.random() * 4;
+        var c = CURSOR_COLORS[Math.floor(Math.random() * CURSOR_COLORS.length)];
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 4 + Math.random() * 6,
+          color: c,
+          life: 1,
+          decay: 0.018 + Math.random() * 0.017
+        });
+      }
+      // Ripple div
+      var ripple = document.createElement('div');
+      ripple.style.cssText = 'position:fixed;border-radius:50%;border:2px solid rgba(124,58,237,0.6);pointer-events:none;z-index:9999997;width:0;height:0;transform:translate(-50%,-50%);animation:rippleBurst 0.8s ease-out forwards;';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      document.body.appendChild(ripple);
+      setTimeout(function () { ripple.remove(); }, 800);
+    }
+
+    function moveCursor(x, y) {
+      mouseX = x;
+      mouseY = y;
+      cursorDot.style.left = x + 'px';
+      cursorDot.style.top = y + 'px';
+
+      var dx = x - lastX;
+      var dy = y - lastY;
+      if (Math.sqrt(dx * dx + dy * dy) > 2) {
+        spawnParticles(x, y, 4);
+        lastX = x;
+        lastY = y;
+      }
+    }
+
+    // Mouse events
+    document.addEventListener('mousemove', function (e) {
+      moveCursor(e.clientX, e.clientY);
     });
 
-    // Lerp ring to follow cursor smoothly
+    // Touch events — cursor on mobile too
+    document.addEventListener('touchmove', function (e) {
+      var t = e.touches[0];
+      moveCursor(t.clientX, t.clientY);
+    }, { passive: true });
+
+    // Click + touchstart — burst
+    document.addEventListener('click', function (e) {
+      spawnBurst(e.clientX, e.clientY);
+    });
+    document.addEventListener('touchstart', function (e) {
+      var t = e.touches[0];
+      moveCursor(t.clientX, t.clientY);
+      spawnBurst(t.clientX, t.clientY);
+    }, { passive: true });
+
+    // Lerp ring
     function animateRing() {
       ringX += (mouseX - ringX) * 0.12;
       ringY += (mouseY - ringY) * 0.12;
@@ -72,65 +128,44 @@
     }
     animateRing();
 
-    // Click — burst 16 particles + ripple
-    document.addEventListener('click', function (e) {
-      // Spawn 16 burst particles
-      for (var i = 0; i < 16; i++) {
-        var angle = (Math.PI * 2 / 16) * i;
-        var speed = 2 + Math.random() * 3;
-        particles.push({
-          x: e.clientX,
-          y: e.clientY,
-          size: 5 + Math.random() * 7,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          life: 1,
-          decay: 0.02 + Math.random() * 0.02,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed
-        });
-      }
-
-      // Ripple div
-      var ripple = document.createElement('div');
-      ripple.style.cssText = 'position:fixed;border-radius:50%;border:2px solid rgba(124,58,237,0.6);pointer-events:none;z-index:9999997;transform:translate(-50%,-50%);animation:rippleBurst 0.6s ease forwards;';
-      ripple.style.left = e.clientX + 'px';
-      ripple.style.top = e.clientY + 'px';
-      document.body.appendChild(ripple);
-      setTimeout(function () { ripple.remove(); }, 600);
-    });
-
-    // Hover a/button — ring scale 1.8x cyan, dot shrink 0.4x
+    // Hover a/button
     document.addEventListener('mouseover', function (e) {
       if (e.target.closest('a, button')) {
-        cursorRing.style.transform = 'translate(-50%,-50%) scale(1.8)';
+        cursorRing.style.width = '56px';
+        cursorRing.style.height = '56px';
         cursorRing.style.borderColor = '#06b6d4';
-        cursorDot.style.transform = 'translate(-50%,-50%) scale(0.4)';
+        cursorRing.style.boxShadow = '0 0 20px rgba(6,182,212,0.5), inset 0 0 16px rgba(6,182,212,0.15)';
+        cursorDot.style.transform = 'translate(-50%,-50%) scale(0.3)';
       }
     });
     document.addEventListener('mouseout', function (e) {
       if (e.target.closest('a, button')) {
-        cursorRing.style.transform = 'translate(-50%,-50%) scale(1)';
-        cursorRing.style.borderColor = 'rgba(124,58,237,0.6)';
+        cursorRing.style.width = '44px';
+        cursorRing.style.height = '44px';
+        cursorRing.style.borderColor = 'rgba(124,58,237,0.7)';
+        cursorRing.style.boxShadow = '0 0 12px rgba(124,58,237,0.4), inset 0 0 12px rgba(124,58,237,0.1)';
         cursorDot.style.transform = 'translate(-50%,-50%) scale(1)';
       }
     });
 
-    // Animation loop — draw particles on canvas
+    // Animation loop — additive blending
     function drawParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (var i = particles.length - 1; i >= 0; i--) {
         var p = particles[i];
         var radius = p.size * p.life;
-        if (radius < 0.5) { particles.splice(i, 1); continue; }
+        if (radius < 0.3) { particles.splice(i, 1); continue; }
 
-        // Draw radial gradient circle with glow
         ctx.save();
-        ctx.globalAlpha = p.life;
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = p.color;
+        ctx.globalCompositeOperation = 'lighter';
+
         var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
-        grad.addColorStop(0, p.color);
-        grad.addColorStop(1, 'transparent');
+        grad.addColorStop(0, 'rgba(' + p.color.r + ',' + p.color.g + ',' + p.color.b + ',' + (p.life * 0.9) + ')');
+        grad.addColorStop(1, 'rgba(' + p.color.r + ',' + p.color.g + ',' + p.color.b + ',0)');
+
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = 'rgba(' + p.color.r + ',' + p.color.g + ',' + p.color.b + ',' + p.life + ')';
+
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
@@ -140,10 +175,11 @@
         // Update physics
         p.x += p.vx;
         p.y += p.vy;
+        p.vx *= 0.94;
+        p.vy *= 0.94;
+        p.vy -= 0.05; // slight upward drift
         p.life -= p.decay;
-        p.size *= 0.98;
-        p.vx *= 0.96;
-        p.vy *= 0.96;
+        p.size *= 0.97;
 
         if (p.life <= 0) {
           particles.splice(i, 1);
@@ -175,7 +211,6 @@
       navLinks.classList.toggle('open');
     });
 
-    // Close on link click
     navLinks.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
         hamburger.classList.remove('active');
@@ -191,7 +226,6 @@
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
-          // Stagger children if inside a grid
           var parent = entry.target.parentElement;
           if (parent) {
             var siblings = Array.from(parent.querySelectorAll('.reveal-item'));
@@ -210,7 +244,6 @@
       observer.observe(item);
     });
   } else {
-    // Fallback for old browsers
     revealItems.forEach(function (item) {
       item.classList.add('visible');
     });
@@ -227,5 +260,34 @@
       }
     });
   });
+
+  // ---- LEAD CAPTURE FORM SUBMISSION ----
+  var leadForm = document.getElementById('leadForm');
+  var formSuccess = document.getElementById('formSuccess');
+
+  if (leadForm && formSuccess) {
+    leadForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var formData = new FormData(leadForm);
+
+      fetch(leadForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      }).then(function (response) {
+        if (response.ok) {
+          leadForm.style.display = 'none';
+          formSuccess.style.display = 'block';
+        } else {
+          leadForm.style.display = 'none';
+          formSuccess.style.display = 'block';
+        }
+      }).catch(function () {
+        leadForm.style.display = 'none';
+        formSuccess.style.display = 'block';
+      });
+    });
+  }
 
 })();
