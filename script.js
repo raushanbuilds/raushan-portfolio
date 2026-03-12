@@ -5,22 +5,28 @@
 (function () {
   'use strict';
 
-  // ---- CUSTOM CURSOR ----
-  const dot = document.getElementById('cursorDot');
-  const ring = document.getElementById('cursorRing');
-  const canvas = document.getElementById('particleCanvas');
-  const ctx = canvas ? canvas.getContext('2d') : null;
-
+  // ---- COLORFUL MULTI-COLOR CURSOR TRAIL ----
+  const cursorDot = document.getElementById('cursor-dot');
+  const cursorRing = document.getElementById('cursor-ring');
+  const particles = [];
+  let lastX = -100, lastY = -100;
   let mouseX = -100, mouseY = -100;
   let ringX = -100, ringY = -100;
-  const particles = [];
+
+  const colors = ['#ff6b9d','#c44dff','#7c3aed','#06b6d4','#10b981','#fbbf24','#f97316','#3b82f6'];
 
   function isTouchDevice() {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }
 
-  if (!isTouchDevice() && dot && ring && canvas && ctx) {
-    // Resize canvas
+  if (!isTouchDevice() && cursorDot && cursorRing) {
+    // Create fullscreen canvas
+    const canvas = document.createElement('canvas');
+    canvas.id = 'cursorCanvas';
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999999;';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -28,67 +34,117 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Mouse move
+    // Mouse move — move dot+ring, spawn trail particles
     document.addEventListener('mousemove', function (e) {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      dot.style.left = mouseX + 'px';
-      dot.style.top = mouseY + 'px';
+      cursorDot.style.left = mouseX + 'px';
+      cursorDot.style.top = mouseY + 'px';
 
-      // Push particle
-      particles.push({ x: mouseX, y: mouseY, life: 1 });
+      // Only spawn if moved >3px
+      var dx = mouseX - lastX;
+      var dy = mouseY - lastY;
+      if (Math.sqrt(dx * dx + dy * dy) > 3) {
+        for (var i = 0; i < 3; i++) {
+          particles.push({
+            x: mouseX + (Math.random() - 0.5) * 4,
+            y: mouseY + (Math.random() - 0.5) * 4,
+            size: 4 + Math.random() * 8,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            life: 1,
+            decay: 0.02 + Math.random() * 0.03,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: (Math.random() - 0.5) * 1.5
+          });
+        }
+        lastX = mouseX;
+        lastY = mouseY;
+      }
     });
 
-    // Lerp ring
+    // Lerp ring to follow cursor smoothly
     function animateRing() {
       ringX += (mouseX - ringX) * 0.12;
       ringY += (mouseY - ringY) * 0.12;
-      ring.style.left = ringX + 'px';
-      ring.style.top = ringY + 'px';
+      cursorRing.style.left = ringX + 'px';
+      cursorRing.style.top = ringY + 'px';
       requestAnimationFrame(animateRing);
     }
     animateRing();
 
-    // Hover detection
-    document.addEventListener('mouseover', function (e) {
-      if (e.target.closest('a, button')) {
-        document.body.classList.add('cursor-hover');
+    // Click — burst 16 particles + ripple
+    document.addEventListener('click', function (e) {
+      // Spawn 16 burst particles
+      for (var i = 0; i < 16; i++) {
+        var angle = (Math.PI * 2 / 16) * i;
+        var speed = 2 + Math.random() * 3;
+        particles.push({
+          x: e.clientX,
+          y: e.clientY,
+          size: 5 + Math.random() * 7,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          life: 1,
+          decay: 0.02 + Math.random() * 0.02,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed
+        });
       }
-    });
-    document.addEventListener('mouseout', function (e) {
-      if (e.target.closest('a, button')) {
-        document.body.classList.remove('cursor-hover');
-      }
-    });
 
-    // Click effects
-    document.addEventListener('mousedown', function (e) {
-      document.body.classList.add('cursor-click');
-      setTimeout(function () {
-        document.body.classList.remove('cursor-click');
-      }, 150);
-
-      // Ripple
+      // Ripple div
       var ripple = document.createElement('div');
-      ripple.className = 'click-ripple';
-      ripple.style.left = (e.clientX - 60) + 'px';
-      ripple.style.top = (e.clientY - 60) + 'px';
+      ripple.style.cssText = 'position:fixed;border-radius:50%;border:2px solid rgba(124,58,237,0.6);pointer-events:none;z-index:9999997;transform:translate(-50%,-50%);animation:rippleBurst 0.6s ease forwards;';
+      ripple.style.left = e.clientX + 'px';
+      ripple.style.top = e.clientY + 'px';
       document.body.appendChild(ripple);
       setTimeout(function () { ripple.remove(); }, 600);
     });
 
-    // Particle trail rendering
+    // Hover a/button — ring scale 1.8x cyan, dot shrink 0.4x
+    document.addEventListener('mouseover', function (e) {
+      if (e.target.closest('a, button')) {
+        cursorRing.style.transform = 'translate(-50%,-50%) scale(1.8)';
+        cursorRing.style.borderColor = '#06b6d4';
+        cursorDot.style.transform = 'translate(-50%,-50%) scale(0.4)';
+      }
+    });
+    document.addEventListener('mouseout', function (e) {
+      if (e.target.closest('a, button')) {
+        cursorRing.style.transform = 'translate(-50%,-50%) scale(1)';
+        cursorRing.style.borderColor = 'rgba(124,58,237,0.6)';
+        cursorDot.style.transform = 'translate(-50%,-50%) scale(1)';
+      }
+    });
+
+    // Animation loop — draw particles on canvas
     function drawParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (var i = particles.length - 1; i >= 0; i--) {
         var p = particles[i];
+        var radius = p.size * p.life;
+        if (radius < 0.5) { particles.splice(i, 1); continue; }
+
+        // Draw radial gradient circle with glow
+        ctx.save();
+        ctx.globalAlpha = p.life;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = p.color;
+        var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+        grad.addColorStop(0, p.color);
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        var size = (particles.length - i) * 0.08;
-        if (size > 3) size = 3;
-        ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(124,58,237,' + (p.life * 0.25) + ')';
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
         ctx.fill();
-        p.life -= 0.05;
+        ctx.restore();
+
+        // Update physics
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= p.decay;
+        p.size *= 0.98;
+        p.vx *= 0.96;
+        p.vy *= 0.96;
+
         if (p.life <= 0) {
           particles.splice(i, 1);
         }
