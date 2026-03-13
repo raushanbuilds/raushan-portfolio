@@ -69,62 +69,36 @@ h3 {
 /* ---------- NEW CUSTOM CURSOR ---------- */
 * { cursor: none !important; }
 
-#cursor-dot {
-    width: 10px;
-    height: 10px;
-    background: white;
+#c-dot {
+    width: 6px;
+    height: 6px;
+    background: #fff;
     border-radius: 50%;
     position: fixed;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
+    top: 0; left: 0;
     pointer-events: none;
     z-index: 9999999;
-    box-shadow:
-        0 0 6px 2px rgba(255,255,255,0.9),
-        0 0 20px 6px rgba(124,58,237,0.8),
-        0 0 40px 10px rgba(6,182,212,0.4);
-    transition: transform 0.08s ease;
+    transform: translate(-50%,-50%);
+    box-shadow: 0 0 8px #fff, 0 0 16px rgba(124,58,237,0.9);
+    will-change: transform, left, top;
 }
 
-#cursor-ring {
-    width: 44px;
-    height: 44px;
-    border: 2px solid rgba(124, 58, 237, 0.7);
+#c-ring {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
+    border: 1.5px solid rgba(124,58,237,0.6);
     position: fixed;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
+    top: 0; left: 0;
     pointer-events: none;
     z-index: 9999998;
-    transition: transform 0.18s ease, border-color 0.3s ease, width 0.3s ease, height 0.3s ease;
-    box-shadow:
-        0 0 12px rgba(124,58,237,0.4),
-        inset 0 0 12px rgba(124,58,237,0.1);
+    transform: translate(-50%,-50%);
+    transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    will-change: transform;
 }
 
-@keyframes rippleBurst {
-    0% {
-        width: 0;
-        height: 0;
-        opacity: 1;
-    }
-    100% {
-        width: 150px;
-        height: 150px;
-        opacity: 0;
-    }
-}
-
-#cursorCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 999999;
+@keyframes ripple-out {
+    to { width:100px; height:100px; opacity:0; }
 }
 
 /* ---------- NAVIGATION ---------- */
@@ -766,7 +740,7 @@ h3 {
 }
 
 .service-card:hover .service-img {
-    transform: scale(1.08);
+    transform: scale(1.07);
 }
 
 .service-img-overlay {
@@ -1536,12 +1510,95 @@ h3 {
         display: none;
     }
 
+    /* --- FIX 2: Contact Form Mobile Responsive --- */
+    .contact-form-section {
+        padding: 60px 1.2rem;
+    }
+
     .contact-form-grid {
         grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .contact-form-left {
+        order: 1;
+    }
+
+    .contact-form-right {
+        order: 2;
     }
 
     .form-row-2 {
         grid-template-columns: 1fr;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    .form-submit-btn {
+        width: 100%;
+        padding: 18px;
+        font-size: 1rem;
+    }
+
+    .contact-form-card {
+        padding: 1.5rem;
+    }
+
+    /* Info cards — text overlay on image, no black gap */
+    .info-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+        height: 160px;
+    }
+
+    .info-card-img-wrap {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .info-card-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .info-card-img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 20%, rgba(5,5,8,0.95) 100%) !important;
+    }
+
+    .info-card-body {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem 1.2rem;
+        z-index: 2;
+    }
+
+    /* Right panel mobile */
+    .contact-form-right {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .dc-whatsapp-btn {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
     }
 }
 
