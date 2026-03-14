@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>RealAgentai — AI Systems for Real Estate Agents</title>
   <meta name="description"
     content="RealAgentai builds AI voice agents, WhatsApp bots & smart automation exclusively for real estate agents. Close more deals while you sleep.">
@@ -16,8 +16,9 @@
 
 <body>
 
-  <!-- ORB CURSOR CANVAS -->
-  <canvas id="orb-canvas"></canvas>
+  <!-- CUSTOM CURSOR -->
+  <div id="c-dot"></div>
+  <div id="c-ring"></div>
 
   <!-- NAVIGATION -->
   <nav class="navbar" id="navbar">
@@ -121,91 +122,61 @@
       </div>
 
       <div class="services-grid">
+        <!-- CARD 1: AI Voice Agent -->
         <div class="service-card reveal-item">
           <div class="service-img-wrap">
-            <img
-              src="https://images.ctfassets.net/ceef56cjbdrm/3JcbgD0tO5A33AhJdUIN7T/06970e031a68bf03c616226c9749c852/image.png?w=1536&h=1024&q=90&fm=webp"
-              alt="AI Voice Agent"
-              class="service-img"
-              style="object-position:center center"
-            />
-            <div class="service-img-overlay"
-              style="background:linear-gradient(to bottom,rgba(124,58,237,0.3),rgba(10,10,18,0.88))"></div>
+            <img src="https://images.unsplash.com/photo-1560264280-88b68371db39?w=600&q=85" alt="AI Voice Agent" class="service-img" style="object-position:center center" />
+            <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(124,58,237,0.3),rgba(10,10,18,0.88))"></div>
           </div>
           <h3>AI Voice Agent</h3>
           <p>Answers calls 24/7, qualifies prospects, and books site visits automatically — so no property inquiry is ever missed.</p>
           <span class="service-tag tag-purple">Most Popular</span>
         </div>
+        <!-- CARD 2: WhatsApp AI Agent -->
         <div class="service-card reveal-item">
           <div class="service-img-wrap">
-            <img
-              src="https://media.licdn.com/dms/image/v2/D4E12AQEOQXAAE8tP7g/article-cover_image-shrink_720_1280/B4EZZn229hHoAM-/0/1745499157458?e=1775088000&v=beta&t=8HCmIZYEQwlMYuMoejXSpfr1T5KefVuOg4ky7Yv7_mI"
-              alt="WhatsApp AI Agent"
-              class="service-img"
-              style="object-position:center top"
-            />
-            <div class="service-img-overlay"
-              style="background:linear-gradient(to bottom,rgba(37,211,102,0.25),rgba(10,10,18,0.88))"></div>
+            <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=85" alt="WhatsApp AI Agent" class="service-img" style="object-position:center top" />
+            <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(37,211,102,0.25),rgba(10,10,18,0.88))"></div>
           </div>
           <h3>WhatsApp AI Agent</h3>
           <p>Instantly responds to inquiries, shares property details, and captures leads directly from WhatsApp conversations.</p>
           <span class="service-tag tag-green">NEW</span>
         </div>
+        <!-- CARD 3: Web Design -->
         <div class="service-card reveal-item">
           <div class="service-img-wrap">
-            <img
-              src="https://www.freepik.com/premium-photo/web-design-team-work-project-concept-yellow-desk-with-web-design-text-top-view-flat-lay_24424680.htm#fromView=keyword&page=1&position=33&uuid=3d5ff8e0-1b51-4838-afca-5578c74a733d&query=Website+design"
-              alt="Web Design"
-              class="service-img"
-              style="object-position:center center"
-            />
-            <div class="service-img-overlay"
-              style="background:linear-gradient(to bottom,rgba(6,182,212,0.25),rgba(10,10,18,0.88))"></div>
+            <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&q=85" alt="Web Design" class="service-img" style="object-position:center center" />
+            <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(6,182,212,0.25),rgba(10,10,18,0.88))"></div>
           </div>
           <h3>Web Design &amp; Development</h3>
           <p>Conversion-focused websites designed to turn visitors into serious property inquiries and booked site visits.</p>
           <span class="service-tag tag-cyan">High Converting</span>
         </div>
+        <!-- CARD 4: Lead Automation -->
         <div class="service-card reveal-item">
           <div class="service-img-wrap">
-            <img
-              src="https://plus.unsplash.com/premium_photo-1661414423895-5854eb6b573a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8bGFuZGluZyUyMHBhZ2V8ZW58MHx8MHx8fDA%3D"
-              alt="Landing Page Design"
-              class="service-img"
-              style="object-position:center top"
-            />
-            <div class="service-img-overlay"
-              style="background:linear-gradient(to bottom,rgba(124,58,237,0.25),rgba(10,10,18,0.88))"></div>
+            <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=85" alt="Lead Follow-Up Automation" class="service-img" style="object-position:center top" />
+            <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(124,58,237,0.25),rgba(10,10,18,0.88))"></div>
           </div>
           <h3>Landing Page Design</h3>
           <p>Landing pages built to turn visitors into qualified leads and booked calls.</p>
           <span class="service-tag tag-green-border">High Converting</span>
         </div>
+        <!-- CARD 5: Business Automation -->
         <div class="service-card reveal-item">
           <div class="service-img-wrap">
-            <img
-              src="https://lh3.googleusercontent.com/rd-gg-dl/AOI_d_8BovE2KAkquXhJt8s7udDua3t-xVW5Ilfi7CF00LMwL5TmbMNXs-g2LyocmgcoW5QkXhkufbGiZzm-EkOO5F8gmzaeGgzV9xUSK3UZXGJcE1H9RN1hY5pWxYY_KAfxjeBRw_wS1tQr8lvfmvZGZqgpQSC9NIKHuisv_8agMFW3-qMTor0hmlPtSpntLqglhSpEm1jWdg7sC_NrZ5i7nyoFgjhY7aTNeg0zwbEBTQaZ6ei36DO2rDncDWla4yoIuH7yfsG_q61IsPC1N9OMPdfq2M-H8uYTGsfbHYEcTFthU_hrmQ9vLYidiO-CyOMea8KYgGosuYkgmCPpL1Kf_heq0y8Q4iDOVwu3zO2AmxsZAGROYil4lgVUUlX087nLrqemR4H4D6QCUx7WcPKZcTeKrOooNXF7WAJgIuH-VAx5kAMhq6_xTv1Z_uFGJDUV-B_WR8PSsNyyFRTXpTKbNpAepZvjgu4OF5tEHhFviW5HW2bVUr6W0j3Z_4ibwHoTANa8OMBCxZUOKNgA1sO1sFamAEHu2BK8-0_fD3JBjBvVil-_02CEtBCvqUB6DrOQziLzrusU4pQmxBgyAwDG0fR1KSgMPmW4ANgkfjI7nqEiSQOgjd6qm2SbcCyiLavq7teOSY3HYP4JaJXnP_20WSECPd8Jka-hbc862x1sAwhZSTQOxxgFUt66GBQnkARWcUOFJqF1o6-DHiXKPxa3ZkPYssLbTA9b9B3YZUbOnws7SK_whetUDmxPJHbzWFzFBgO_QpY0D6TYoTWATsi4tUHnsz-OV12HWZXWiHrDQ2a4-8e5kOnMTkurpl1gSf0iJdSgTIdF1DBXgpaigDOHwc2PJjrglm7SOMzI5xA88DVTyw6oJPbeC1vnIWX2jh62sGV5DmoFP6qERX1uThN2xEyU9NEuCzIp7UrJa5RGXx-Qky0GtoFdVz61aV6aKJEiJ_aF_Axe1hDfWgHsQkHdz6X8SfM-yqAZ1KMfinN-MXWeKtDrketSKSDJf_Xiixlm5V6EVHf5gwEmWDOxmH6MxXJ36OUp44DkoicEfqg63FCMN7gPfilO-GdOpCxc0pU3iSOuz2aA20USP70o8pTjb-LqgSta9vfFtAqN_Tc09Z_nBFWTewClHNSVXITRIk6kRaNMRMvWdRBUPOl3GlmoumOkb-1HOtIWmQAkDNZxTaZoWiKTQbX9Ac2n-VWmH4z3IFlLhYVf3b8rRqZ7ZrbyZSeYaco2JTE5Zf-61rG27-Xln6JCp52ORRt4OEK3mOvvFx4F6sLqM-LZM5kl023KgfDRqBxJ8vREoHe2Q7HZwY1R4vCYzxl-HbY6CQWj9EE6FfM1R-d3PyHTFEIPLZ28zfi1Ysilbb4AjpMWcWsPl4kyKle6nsz63N-LZwbmTCkbc3BsqQCvVqCyJ-qqNIDCQjKnMPDLRonuZMIkzB10ko5P159RIDA6tRVyacMTaId383HfsEB1W4X6dlk3hFM=s1024-rj?authuser=1"
-              alt="Business Process Automation"
-              class="service-img"
-              style="object-position:center center"
-            />
-            <div class="service-img-overlay"
-              style="background:linear-gradient(to bottom,rgba(16,185,129,0.2),rgba(10,10,18,0.88))"></div>
+            <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=85" alt="Business Process Automation" class="service-img" style="object-position:center center" />
+            <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(16,185,129,0.2),rgba(10,10,18,0.88))"></div>
           </div>
           <h3>Business Process Automation</h3>
           <p>Automates repetitive tasks like lead routing, reporting, onboarding, and internal workflows.</p>
           <span class="service-tag tag-purple">Time Saving</span>
         </div>
+        <!-- CARD 6: Complete AI System -->
         <div class="service-card reveal-item">
           <div class="service-img-wrap">
-            <img
-              src="https://lh3.googleusercontent.com/gg-dl/AOI_d__6MnL-8UNiT7J8u5mT8fHkL_MExCr1rY4KBUnoHdN9l49lI0mXNVLzqKKj1nidSzU0M3H6B7Is9rkADuvz19a7hs1ekqdJ1KBGkS9VBmGf2JEVGbhKIdXu2Umn8rVHXhFIh7N47DsQerypU3L31zu7M3S4IQMJHUl8l4WjitXLnZ_L=s1024-rj?authuser=1"
-              alt="Complete AI System (All-in-One)"
-              class="service-img"
-              style="object-position:center top"
-            />
-            <div class="service-img-overlay"
-              style="background:linear-gradient(to bottom,rgba(6,182,212,0.2),rgba(10,10,18,0.88))"></div>
+            <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=600&q=85" alt="Complete AI System" class="service-img" style="object-position:center top" />
+            <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(6,182,212,0.2),rgba(10,10,18,0.88))"></div>
           </div>
           <h3>Complete AI System (All-in-One)</h3>
           <p>AI system that captures, qualifies, follows up, and books clients automatically.</p>
@@ -574,150 +545,90 @@
 
   <!-- LEAD CAPTURE FORM SECTION -->
   <section class="contact-form-section" id="contact-form">
-    <div class="container">
-      <div class="contact-form-grid">
+    <div class="cf-inner reveal-item">
 
-        <!-- LEFT SIDE — FORM -->
-        <div class="contact-form-left reveal-item">
-          <span class="section-label"><span class="label-line"></span>GET STARTED</span>
-          <h2>Tell Me About Your Project.</h2>
-          <p class="contact-form-sub">I'll get back within 24 hours.</p>
+      <!-- HEADER -->
+      <div class="cf-header">
+        <span class="section-label"><span class="label-line"></span>GET STARTED</span>
+        <h2 class="cf-heading">Tell Me About Your Project.</h2>
+        <p class="cf-sub">I'll get back to you within 24 hours.</p>
+      </div>
 
-          <div class="contact-form-card" id="contactFormCard">
-            <form id="leadForm" action="https://formspree.io/f/your-form-id" method="POST">
-              <div class="form-row form-row-2">
-                <div class="form-group">
-                  <label for="cf-name">Name *</label>
-                  <input type="text" id="cf-name" name="name" placeholder="Your full name" required>
-                </div>
-                <div class="form-group">
-                  <label for="cf-phone">Phone Number *</label>
-                  <input type="tel" id="cf-phone" name="phone" placeholder="+91 XXXXX XXXXX" required>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="cf-email">Email Address *</label>
-                <input type="email" id="cf-email" name="email" placeholder="you@example.com" required>
-              </div>
-
-              <div class="form-group">
-                <label for="cf-website">Website URL</label>
-                <input type="url" id="cf-website" name="website" placeholder="yourwebsite.com (optional)">
-              </div>
-
-              <div class="form-group">
-                <label for="cf-service">Service Required *</label>
-                <select id="cf-service" name="service" required>
-                  <option value="" disabled selected>-- Select a service --</option>
-                  <option value="AI Voice Agent">🤖 AI Voice Agent</option>
-                  <option value="WhatsApp AI Agent">💬 WhatsApp AI Agent</option>
-                  <option value="Web Design & Development">🌐 Web Design & Development</option>
-                  <option value="Lead Follow-Up Automation">⚡ Lead Follow-Up Automation</option>
-                  <option value="Site Visit Booking System">📅 Site Visit Booking System</option>
-                  <option value="Business Process Automation">🔄 Business Process Automation</option>
-                  <option value="Conversion Landing Page Design">📊 Conversion Landing Page Design</option>
-                  <option value="Complete AI System (All-in-One)">🎯 Complete AI System (All-in-One)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="cf-budget">Project Budget *</label>
-                <select id="cf-budget" name="budget" required>
-                  <option value="" disabled selected>-- Select your budget --</option>
-                  <option value="20K-30K">₹20,000 – ₹30,000 (Starter)</option>
-                  <option value="30K-60K">₹30,000 – ₹60,000 (Growth)</option>
-                  <option value="60K-1L">₹60,000 – ₹1,00,000 (Professional)</option>
-                  <option value="1L-3L">₹1,00,000 – ₹3,00,000 (Business)</option>
-                  <option value="3L-10L">₹3,00,000 – ₹10,00,000 (Enterprise)</option>
-                  <option value="10L+">₹10,00,000+ (Custom / Large Scale)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="cf-message">Tell me about your business</label>
-                <textarea id="cf-message" name="message" rows="4" placeholder="What does your business do? What's your biggest challenge right now?"></textarea>
-              </div>
-
-              <button type="submit" class="form-submit-btn">Submit My Project Details →</button>
-              <p class="form-trust-text">🔒 Your info is private. No spam, ever.</p>
-            </form>
-
-            <!-- Success State -->
-            <div class="form-success" id="formSuccess" style="display:none;">
-              <span class="form-success-icon">✅</span>
-              <h3>Request Received!</h3>
-              <p>I'll reach out within 24 hours.</p>
+      <!-- FORM CARD -->
+      <div class="contact-form-card" id="contactFormCard">
+        <form id="leadForm" action="https://formspree.io/f/your-form-id" method="POST">
+          <div class="form-row form-row-2">
+            <div class="form-group">
+              <label for="cf-name">Full Name *</label>
+              <input type="text" id="cf-name" name="name" placeholder="Your full name" required>
             </div>
-          </div>
-        </div>
-
-        <!-- RIGHT SIDE — INFO PANEL -->
-        <div class="contact-form-right reveal-item">
-
-          <!-- Card 1 — Quick Response -->
-          <div class="info-card">
-            <div class="info-card-img-wrap">
-              <img src="https://images.unsplash.com/photo-1556155092-490a1ba16284?w=600&q=85" alt="Quick Response" class="info-card-img">
-              <div class="info-card-img-overlay" style="background:linear-gradient(to bottom,rgba(124,58,237,0.3),rgba(10,10,18,0.7))"></div>
-            </div>
-            <div class="info-card-body">
-              <span class="info-dot" style="background:#7c3aed;box-shadow:0 0 8px #7c3aed"></span>
-              <div>
-                <span class="info-card-title">Reply Within 24 Hours</span>
-                <span class="info-card-text">Send your details now — I respond fast, always.</span>
-              </div>
+            <div class="form-group">
+              <label for="cf-phone">Phone Number *</label>
+              <input type="tel" id="cf-phone" name="phone" placeholder="+91 98765 43210" required>
             </div>
           </div>
 
-          <!-- Card 2 — Free Strategy Call -->
-          <div class="info-card">
-            <div class="info-card-img-wrap">
-              <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=85" alt="Strategy Call" class="info-card-img">
-              <div class="info-card-img-overlay" style="background:linear-gradient(to bottom,rgba(6,182,212,0.3),rgba(10,10,18,0.7))"></div>
-            </div>
-            <div class="info-card-body">
-              <span class="info-dot" style="background:#06b6d4;box-shadow:0 0 8px #06b6d4"></span>
-              <div>
-                <span class="info-card-title">Free 30-Min Strategy Call</span>
-                <span class="info-card-text">We plan your entire AI system together. Zero cost.</span>
-              </div>
-            </div>
+          <div class="form-group">
+            <label for="cf-email">Email Address *</label>
+            <input type="email" id="cf-email" name="email" placeholder="you@example.com" required>
           </div>
 
-          <!-- Card 3 — Confidential -->
-          <div class="info-card">
-            <div class="info-card-img-wrap">
-              <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&q=85" alt="Confidential" class="info-card-img">
-              <div class="info-card-img-overlay" style="background:linear-gradient(to bottom,rgba(16,185,129,0.3),rgba(10,10,18,0.7))"></div>
-            </div>
-            <div class="info-card-body">
-              <span class="info-dot" style="background:#10b981;box-shadow:0 0 8px #10b981"></span>
-              <div>
-                <span class="info-card-title">100% Private & Confidential</span>
-                <span class="info-card-text">Your business idea and info never leaves this conversation.</span>
-              </div>
-            </div>
+          <div class="form-group">
+            <label for="cf-website">Website URL</label>
+            <input type="url" id="cf-website" name="website" placeholder="yourwebsite.com (optional)">
           </div>
 
-          <!-- Glowing Direct Contact Box -->
-          <div class="direct-contact-box">
-            <div class="dc-header">
-              <div class="dc-avatar">RD</div>
-              <span class="dc-author">Raushan — Founder, RealAgentai</span>
-            </div>
-            <div class="dc-divider"></div>
-            <p class="dc-question">Prefer to connect directly?</p>
-            <p class="dc-sub">Most clients reach out on WhatsApp and get a reply within hours.</p>
-            <a href="https://wa.me/917061409529?text=Hi%20RealAgentai,%20I%20want%20to%20discuss%20my%20project!" target="_blank" class="dc-whatsapp-btn">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-              Chat on WhatsApp
-            </a>
-            <p class="dc-trust-line">🟢 Usually replies within 2-3 hours</p>
+          <div class="form-group">
+            <label for="cf-service">Service Required *</label>
+            <select id="cf-service" name="service" required>
+              <option value="" disabled selected>-- Select a service --</option>
+              <option value="AI Voice Agent">🤖 AI Voice Agent</option>
+              <option value="WhatsApp AI Agent">💬 WhatsApp AI Agent</option>
+              <option value="Web Design & Development">🌐 Web Design &amp; Development</option>
+              <option value="Lead Follow-Up Automation">⚡ Lead Follow-Up Automation</option>
+              <option value="Site Visit Booking System">📅 Site Visit Booking System</option>
+              <option value="Business Process Automation">🔄 Business Process Automation</option>
+              <option value="Complete AI System (All-in-One)">🎯 Complete AI System (All-in-One)</option>
+            </select>
           </div>
 
+          <div class="form-group">
+            <label for="cf-budget">Project Budget *</label>
+            <select id="cf-budget" name="budget" required>
+              <option value="" disabled selected>-- Select your budget --</option>
+              <option value="15K-30K">₹15,000 – ₹30,000 (Starter)</option>
+              <option value="30K-60K">₹30,000 – ₹60,000 (Growth)</option>
+              <option value="60K-1L">₹60,000 – ₹1,00,000 (Professional)</option>
+              <option value="1L-3L">₹1,00,000 – ₹3,00,000 (Business)</option>
+              <option value="3L-10L">₹3,00,000 – ₹10,00,000 (Enterprise)</option>
+              <option value="10L+">₹10,00,000+ (Custom / Large Scale)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cf-message">Tell me about your business</label>
+            <textarea id="cf-message" name="message" rows="4" placeholder="What does your business do? What's your biggest challenge right now?" style="resize:vertical"></textarea>
+          </div>
+
+          <button type="submit" class="form-submit-btn">Submit My Project Details →</button>
+          <p class="form-trust-text">🔒 Your info is private. No spam, ever.</p>
+        </form>
+
+        <!-- Success State -->
+        <div class="form-success" id="formSuccess" style="display:none;">
+          <span class="form-success-icon">✅</span>
+          <h3>Request Received!</h3>
+          <p>I'll reach out within 24 hours.</p>
         </div>
       </div>
+
+      <!-- TRUST BADGES -->
+      <div class="cf-trust-badges">
+        <span class="cf-badge">💬 24hr Response</span>
+        <span class="cf-badge">📞 Free Strategy Call</span>
+        <span class="cf-badge">🔒 100% Confidential</span>
+      </div>
+
     </div>
   </section>
 
@@ -798,6 +709,60 @@
   </footer>
 
   <script src="script.js"></script>
+
+  <!-- FAST COLORFUL CURSOR -->
+  <script>
+  (function(){
+    var dot  = document.getElementById('c-dot');
+    var ring = document.getElementById('c-ring');
+    if(!dot||!ring) return;
+    var C=[[255,80,140],[180,50,255],[90,50,240],[0,195,215],[0,205,120],[255,175,25],[255,95,15],[45,125,250]];
+    var mx=0,my=0,rx=0,ry=0,pts=[];
+    window.addEventListener('mousemove',function(e){
+      mx=e.clientX; my=e.clientY;
+      dot.style.left=mx+'px'; dot.style.top=my+'px';
+      for(var i=0;i<2;i++){
+        var c=C[Math.random()*C.length|0];
+        pts.push({x:mx+(Math.random()-.5)*8,y:my+(Math.random()-.5)*8,r:Math.random()*4+2,vx:(Math.random()-.5)*2.5,vy:(Math.random()-.5)*2.5,life:1,d:Math.random()*.04+.03,c:c});
+      }
+    },{passive:true});
+    (function loop(){rx+=(mx-rx)*.22;ry+=(my-ry)*.22;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+    var cv=document.createElement('canvas');
+    cv.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:999995;';
+    document.body.appendChild(cv);
+    var ct=cv.getContext('2d');
+    function rsz(){cv.width=innerWidth;cv.height=innerHeight;} rsz();
+    window.addEventListener('resize',rsz);
+    (function draw(){
+      ct.clearRect(0,0,cv.width,cv.height);
+      ct.globalCompositeOperation='lighter';
+      pts=pts.filter(function(p){return p.life>0;});
+      for(var i=0;i<pts.length;i++){
+        var p=pts[i],r=p.c[0],g=p.c[1],b=p.c[2];
+        var gd=ct.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*p.life*2.5);
+        gd.addColorStop(0,'rgba('+r+','+g+','+b+','+(p.life*.85)+')');
+        gd.addColorStop(1,'rgba('+r+','+g+','+b+',0)');
+        ct.beginPath();ct.arc(p.x,p.y,p.r*p.life*2.5,0,Math.PI*2);ct.fillStyle=gd;ct.fill();
+        p.x+=p.vx;p.y+=p.vy;p.vx*=.94;p.vy*=.94;p.vy-=.05;p.life-=p.d;p.r*=.97;
+      }
+      ct.globalCompositeOperation='source-over';
+      requestAnimationFrame(draw);
+    })();
+    window.addEventListener('click',function(e){
+      for(var i=0;i<14;i++){
+        var a=(i/14)*Math.PI*2,s=Math.random()*4+2,c=C[Math.random()*C.length|0];
+        pts.push({x:e.clientX,y:e.clientY,r:Math.random()*5+3,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,d:.025,c:c});
+      }
+      var d=document.createElement('div');
+      d.style.cssText='position:fixed;left:'+e.clientX+'px;top:'+e.clientY+'px;width:0;height:0;border-radius:50%;border:1.5px solid rgba(124,58,237,.7);transform:translate(-50%,-50%);pointer-events:none;z-index:999996;animation:rpl-out .7s ease forwards;';
+      document.body.appendChild(d);setTimeout(function(){d.remove();},700);
+    });
+    document.querySelectorAll('a,button').forEach(function(el){
+      el.addEventListener('mouseenter',function(){ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='#06b6d4';});
+      el.addEventListener('mouseleave',function(){ring.style.width='32px';ring.style.height='32px';ring.style.borderColor='rgba(124,58,237,.6)';});
+    });
+  })();
+  </script>
 </body>
 
 </html>

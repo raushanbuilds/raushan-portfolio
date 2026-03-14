@@ -5,79 +5,7 @@
 (function () {
   'use strict';
 
-  // ---- ORB CURSOR (colour-shifting glow) ----
-  (function(){
-    var cvs = document.getElementById('orb-canvas');
-    if(!cvs) return;
-    var ctx = cvs.getContext('2d');
 
-    function resize(){
-      cvs.width  = window.innerWidth;
-      cvs.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    var tx = window.innerWidth  / 2;
-    var ty = window.innerHeight / 2;
-    var cx = tx, cy = ty;
-    var hue = 0;
-
-    window.addEventListener('mousemove', function(e){
-      tx = e.clientX;
-      ty = e.clientY;
-    });
-
-    window.addEventListener('touchmove', function(e){
-      e.preventDefault();
-      tx = e.touches[0].clientX;
-      ty = e.touches[0].clientY;
-    }, { passive: false });
-
-    window.addEventListener('touchstart', function(e){
-      tx = e.touches[0].clientX;
-      ty = e.touches[0].clientY;
-    });
-
-    function draw(){
-      ctx.clearRect(0, 0, cvs.width, cvs.height);
-
-      cx += (tx - cx) * 0.07;
-      cy += (ty - cy) * 0.07;
-
-      hue = (hue + 0.8) % 360;
-
-      var radius = 180;
-
-      ctx.globalCompositeOperation = 'lighter';
-
-      var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-      grad.addColorStop(0,   'hsla(' + hue       + ', 100%, 65%, 0.40)');
-      grad.addColorStop(0.3, 'hsla(' + hue       + ', 100%, 55%, 0.20)');
-      grad.addColorStop(0.6, 'hsla(' + (hue + 30)+ ',  90%, 50%, 0.08)');
-      grad.addColorStop(1,   'hsla(' + (hue + 60)+ ',  80%, 40%, 0.00)');
-
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      var innerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 0.4);
-      innerGrad.addColorStop(0, 'hsla(' + (hue + 180) + ', 100%, 80%, 0.25)');
-      innerGrad.addColorStop(1, 'hsla(' + (hue + 180) + ', 100%, 60%, 0.00)');
-
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius * 0.4, 0, Math.PI * 2);
-      ctx.fillStyle = innerGrad;
-      ctx.fill();
-
-      ctx.globalCompositeOperation = 'source-over';
-
-      requestAnimationFrame(draw);
-    }
-
-    draw();
-  })();
 
   // ---- LIGHTNING HERO BACKGROUND ----
   (function(){
