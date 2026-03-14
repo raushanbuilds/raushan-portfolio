@@ -1,146 +1,191 @@
 /* ============================================
-   REALAGENT.AI — PREMIUM PORTFOLIO JS
+   REALAGENTAI — PREMIUM PORTFOLIO JS
    ============================================ */
 
 (function () {
   'use strict';
 
-  // ---- NEW FAST COLORFUL CURSOR ----
-  (function() {
-    const dot  = document.getElementById('c-dot');
-    const ring = document.getElementById('c-ring');
-
-    if (!dot || !ring) return;
-
-    const COLORS = [
-      [255,100,150],
-      [180,60,255],
-      [100,60,240],
-      [0,200,220],
-      [0,210,130],
-      [255,180,30],
-      [255,100,20],
-      [50,130,255],
-    ];
-
-    let mx = 0, my = 0;
-    let rx = 0, ry = 0;
-    let particles = [];
-
-    // INSTANT dot — no lerp
-    document.addEventListener('mousemove', function(e) {
-      mx = e.clientX;
-      my = e.clientY;
-      dot.style.left  = mx + 'px';
-      dot.style.top   = my + 'px';
-
-      for (var i = 0; i < 2; i++) {
-        var c = COLORS[Math.floor(Math.random() * COLORS.length)];
-        particles.push({
-          x: mx + (Math.random()-0.5)*6,
-          y: my + (Math.random()-0.5)*6,
-          r: Math.random()*5+2,
-          vx:(Math.random()-0.5)*2,
-          vy:(Math.random()-0.5)*2,
-          life: 1,
-          decay: Math.random()*0.04+0.03,
-          color: c
-        });
-      }
-    });
-
-    // Ring follows with slight smooth lag
-    function animateRing() {
-      rx += (mx - rx) * 0.22;
-      ry += (my - ry) * 0.22;
-      ring.style.left = rx + 'px';
-      ring.style.top  = ry + 'px';
-      requestAnimationFrame(animateRing);
-    }
-    animateRing();
-
-    // Canvas for particle trail
-    var cvs = document.createElement('canvas');
-    cvs.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:999996;width:100vw;height:100vh;';
-    document.body.appendChild(cvs);
+  // ---- ORB CURSOR (colour-shifting glow) ----
+  (function(){
+    var cvs = document.getElementById('orb-canvas');
+    if(!cvs) return;
     var ctx = cvs.getContext('2d');
 
-    function resize() {
+    function resize(){
       cvs.width  = window.innerWidth;
       cvs.height = window.innerHeight;
     }
     resize();
     window.addEventListener('resize', resize);
 
-    // Draw loop
-    function draw() {
-      ctx.clearRect(0,0,cvs.width,cvs.height);
+    var tx = window.innerWidth  / 2;
+    var ty = window.innerHeight / 2;
+    var cx = tx, cy = ty;
+    var hue = 0;
+
+    window.addEventListener('mousemove', function(e){
+      tx = e.clientX;
+      ty = e.clientY;
+    });
+
+    window.addEventListener('touchmove', function(e){
+      e.preventDefault();
+      tx = e.touches[0].clientX;
+      ty = e.touches[0].clientY;
+    }, { passive: false });
+
+    window.addEventListener('touchstart', function(e){
+      tx = e.touches[0].clientX;
+      ty = e.touches[0].clientY;
+    });
+
+    function draw(){
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+      cx += (tx - cx) * 0.07;
+      cy += (ty - cy) * 0.07;
+
+      hue = (hue + 0.8) % 360;
+
+      var radius = 180;
+
       ctx.globalCompositeOperation = 'lighter';
 
-      particles = particles.filter(function(p){return p.life>0;});
+      var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      grad.addColorStop(0,   'hsla(' + hue       + ', 100%, 65%, 0.40)');
+      grad.addColorStop(0.3, 'hsla(' + hue       + ', 100%, 55%, 0.20)');
+      grad.addColorStop(0.6, 'hsla(' + (hue + 30)+ ',  90%, 50%, 0.08)');
+      grad.addColorStop(1,   'hsla(' + (hue + 60)+ ',  80%, 40%, 0.00)');
 
-      for (var i = 0; i < particles.length; i++) {
-        var p = particles[i];
-        var r = p.color[0], g = p.color[1], b = p.color[2];
-        var g2 = ctx.createRadialGradient(p.x,p.y,0, p.x,p.y,p.r*p.life*2);
-        g2.addColorStop(0, 'rgba('+r+','+g+','+b+','+(p.life*0.8)+')');
-        g2.addColorStop(1, 'rgba('+r+','+g+','+b+',0)');
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r*p.life*2,0,Math.PI*2);
-        ctx.fillStyle = g2;
-        ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
 
-        p.x  += p.vx;
-        p.y  += p.vy;
-        p.vx *= 0.95;
-        p.vy *= 0.95;
-        p.vy -= 0.04;
-        p.life -= p.decay;
-        p.r  *= 0.97;
-      }
+      var innerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 0.4);
+      innerGrad.addColorStop(0, 'hsla(' + (hue + 180) + ', 100%, 80%, 0.25)');
+      innerGrad.addColorStop(1, 'hsla(' + (hue + 180) + ', 100%, 60%, 0.00)');
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = innerGrad;
+      ctx.fill();
 
       ctx.globalCompositeOperation = 'source-over';
+
       requestAnimationFrame(draw);
     }
+
     draw();
+  })();
 
-    // Click burst
-    document.addEventListener('click', function(e) {
-      for (var i=0; i<14; i++) {
-        var angle = (i/14)*Math.PI*2;
-        var spd   = Math.random()*4+2;
-        var c = COLORS[Math.floor(Math.random()*COLORS.length)];
-        particles.push({
-          x:e.clientX, y:e.clientY,
-          r:Math.random()*5+3,
-          vx:Math.cos(angle)*spd,
-          vy:Math.sin(angle)*spd,
-          life:1,
-          decay:0.025,
-          color:c
-        });
+  // ---- LIGHTNING HERO BACKGROUND ----
+  (function(){
+    var canvas = document.getElementById('lightning-canvas');
+    if(!canvas) return;
+    var ctx = canvas.getContext('2d');
+
+    function resize(){
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var BLUE_COLORS = [
+      'rgba(0, 150, 255,',
+      'rgba(0, 200, 255,',
+      'rgba(50, 100, 255,',
+      'rgba(100, 180, 255,',
+      'rgba(0, 220, 240,',
+    ];
+
+    function drawBolt(x1, y1, x2, y2, roughness, depth, color, alpha){
+      if(depth <= 0) return;
+      var dx  = x2 - x1, dy = y2 - y1;
+      var len = Math.sqrt(dx*dx + dy*dy);
+      if(len < 2) return;
+
+      var mx = (x1+x2)/2 + (Math.random()-0.5) * roughness * len;
+      var my = (y1+y2)/2 + (Math.random()-0.5) * roughness * len;
+
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(mx,my);
+      ctx.strokeStyle = color + (alpha*0.15)+')';
+      ctx.lineWidth = depth * 3; ctx.lineCap = 'round';
+      ctx.filter = 'blur(8px)'; ctx.stroke(); ctx.filter = 'none';
+
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(mx,my);
+      ctx.strokeStyle = color + alpha + ')';
+      ctx.lineWidth = depth * 0.8; ctx.stroke();
+
+      ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(x2,y2);
+      ctx.strokeStyle = color + (alpha*0.15)+')';
+      ctx.lineWidth = depth * 3;
+      ctx.filter = 'blur(8px)'; ctx.stroke(); ctx.filter = 'none';
+
+      ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(x2,y2);
+      ctx.strokeStyle = color + alpha + ')';
+      ctx.lineWidth = depth * 0.8; ctx.stroke();
+
+      drawBolt(x1,y1,mx,my, roughness, depth-1, color, alpha*0.9);
+      drawBolt(mx,my,x2,y2, roughness, depth-1, color, alpha*0.9);
+
+      if(Math.random() < 0.4 && depth > 2){
+        var bx = mx + (Math.random()-0.5) * canvas.width  * 0.3;
+        var by = my + Math.random() * (canvas.height - my) * 0.5;
+        drawBolt(mx,my,bx,by, roughness*1.2, depth-2, color, alpha*0.5);
       }
-      // Ripple
-      var rpl = document.createElement('div');
-      rpl.style.cssText='position:fixed;left:'+e.clientX+'px;top:'+e.clientY+'px;width:0;height:0;border-radius:50%;border:1.5px solid rgba(124,58,237,0.7);transform:translate(-50%,-50%);pointer-events:none;z-index:999997;animation:ripple-out 0.7s ease forwards;';
-      document.body.appendChild(rpl);
-      setTimeout(function(){rpl.remove();},700);
-    });
+    }
 
-    // Hover effect
-    document.querySelectorAll('a,button').forEach(function(el){
-      el.addEventListener('mouseenter',function(){
-        ring.style.width  = '50px';
-        ring.style.height = '50px';
-        ring.style.borderColor = '#06b6d4';
-      });
-      el.addEventListener('mouseleave',function(){
-        ring.style.width  = '32px';
-        ring.style.height = '32px';
-        ring.style.borderColor = 'rgba(124,58,237,0.6)';
-      });
-    });
+    function drawBlob(){
+      var bx = canvas.width  * 0.5;
+      var by = canvas.height * 0.75;
+      var r  = canvas.width  * 0.35;
+      var g  = ctx.createRadialGradient(bx, by, 0, bx, by, r);
+      g.addColorStop(0,   'rgba(0, 80, 200, 0.25)');
+      g.addColorStop(0.5, 'rgba(0, 50, 150, 0.10)');
+      g.addColorStop(1,   'rgba(0,  0,   0, 0.00)');
+      ctx.beginPath();
+      ctx.arc(bx, by, r, 0, Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.fill();
+    }
 
+    var bolts = [], frame = 0;
+
+    function spawnBolt(){
+      var startX = canvas.width  * (0.30 + Math.random() * 0.40);
+      var endX   = canvas.width  * (0.35 + Math.random() * 0.30);
+      var endY   = canvas.height * (0.60 + Math.random() * 0.30);
+      var colorIdx = Math.floor(Math.random() * BLUE_COLORS.length);
+      bolts.push({
+        x1: startX, y1: 0, x2: endX, y2: endY,
+        color: BLUE_COLORS[colorIdx],
+        life: 1,
+        decay: 1 / (8 + Math.floor(Math.random() * 8))
+      });
+    }
+
+    function animate(){
+      ctx.fillStyle = 'rgba(5,5,8,0.6)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drawBlob();
+
+      if(frame % (12 + Math.floor(Math.random()*8)) === 0){
+        spawnBolt();
+        if(Math.random() < 0.3) spawnBolt();
+      }
+
+      bolts = bolts.filter(function(b){ return b.life > 0; });
+      for(var i = 0; i < bolts.length; i++){
+        var b = bolts[i];
+        drawBolt(b.x1, b.y1, b.x2, b.y2, 0.35, 6, b.color, b.life);
+        b.life -= b.decay;
+      }
+      frame++;
+      requestAnimationFrame(animate);
+    }
+    animate();
   })();
 
   // ---- NAVBAR SCROLL ----
@@ -244,3 +289,4 @@
   }
 
 })();
+
