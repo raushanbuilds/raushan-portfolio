@@ -305,7 +305,7 @@ img {
     font-weight: 500;
     letter-spacing: 0.04em;
     color: var(--text);
-    animation: fadeDown 0.6s ease both;
+    /* animation: fadeDown 0.6s ease both; ANIMATION REMOVED */
 }
 
 .pulse-dot {
@@ -336,7 +336,7 @@ img {
     font-size: clamp(2.4rem, 6vw, 4.8rem);
     line-height: 1.08;
     letter-spacing: -0.04em;
-    animation: fadeUp 0.7s ease 0.2s both;
+    /* animation: fadeUp 0.7s ease 0.2s both; ANIMATION REMOVED */
 }
 
 .gradient-text {
@@ -345,7 +345,7 @@ img {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: gradientShift 4s ease infinite;
+    /* animation: gradientShift 4s ease infinite; ANIMATION REMOVED */
 }
 
 @keyframes gradientShift {
@@ -370,7 +370,7 @@ img {
     letter-spacing: 0.01em;
     color: rgba(240, 240, 248, 0.55);
     max-width: 560px;
-    animation: fadeUp 0.7s ease 0.4s both;
+    /* animation: fadeUp 0.7s ease 0.4s both; ANIMATION REMOVED */
 }
 
 .hero-offer {
@@ -383,7 +383,7 @@ img {
     font-size: 0.78rem;
     font-weight: 500;
     letter-spacing: 0.02em;
-    animation: fadeUp 0.7s ease 0.5s both;
+    /* animation: fadeUp 0.7s ease 0.5s both; ANIMATION REMOVED */
 }
 
 .hero-ctas {
@@ -391,7 +391,7 @@ img {
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
-    animation: fadeUp 0.7s ease 0.6s both;
+    /* animation: fadeUp 0.7s ease 0.6s both; ANIMATION REMOVED */
 }
 
 .btn-primary {
@@ -460,7 +460,7 @@ img {
     align-items: center;
     gap: 3rem;
     margin-top: 1rem;
-    animation: fadeUp 0.7s ease 0.8s both;
+    /* animation: fadeUp 0.7s ease 0.8s both; ANIMATION REMOVED */
 }
 
 .stat {
@@ -502,14 +502,14 @@ img {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    animation: fadeIn 1s ease 1.5s both;
+    /* animation: fadeIn 1s ease 1.5s both; ANIMATION REMOVED */
 }
 
 .scroll-line {
     width: 1px;
     height: 40px;
     background: linear-gradient(to bottom, var(--purple), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
+    /* animation: scrollPulse 2s ease-in-out infinite; ANIMATION REMOVED */
 }
 
 @keyframes scrollPulse {
