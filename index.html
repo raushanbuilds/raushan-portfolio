@@ -761,7 +761,6 @@
   </script>
    
 <style>
-  #fluid-canvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -780,10 +779,6 @@
 <script>
 (function() {
   'use strict';
- 
-  const config = {
-    SIM_RESOLUTION      : 128,
-    DYE_RESOLUTION      : 1440,
     CAPTURE_RESOLUTION  : 512,
     DENSITY_DISSIPATION : 3.5,
     VELOCITY_DISSIPATION: 2,
@@ -802,13 +797,13 @@
   /* Mobile pe performance save karo */
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
     || window.matchMedia('(hover: none)').matches;
-  if (isMobile) {
-    config.SIM_RESOLUTION       = 64;
-    config.DYE_RESOLUTION       = 512;
-    config.DENSITY_DISSIPATION  = 4;
-    config.VELOCITY_DISSIPATION = 3;
-    config.SPLAT_FORCE          = 3000;
-  }
+    if (window.innerWidth <= 768) {
+  config.SIM_RESOLUTION       = 64;
+  config.DYE_RESOLUTION       = 512;
+  config.DENSITY_DISSIPATION  = 4;
+  config.VELOCITY_DISSIPATION = 3;
+  config.SPLAT_FORCE          = 3000;
+}
  
   const canvas = document.getElementById('fluid-canvas');
   canvas.width  = canvas.clientWidth;
