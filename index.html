@@ -36,7 +36,327 @@
 
   <!-- HERO SECTION -->
   <section class="hero" id="hero">
-    <canvas id="lightning-canvas"></canvas>
+    <!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║   HERO FLOWING TUBES BACKGROUND — RealAgent.ai              ║
+  ║   Futuristic glowing silk ribbons animation                  ║
+  ║                                                              ║
+  ║   PASTE KARO: index.html mein                                ║
+  ║   <section class="hero" id="hero">                           ║
+  ║   ke andar, SABSE PEHLI LINE mein                            ║
+  ║   (existing <canvas id="lightning-canvas"> KO REPLACE karo)  ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+
+<!-- STEP 1: Purana lightning-canvas HATAO aur YE lagao -->
+<canvas id="hero-tubes-canvas" style="
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;
+  pointer-events:none;
+  display:block;
+"></canvas>
+
+<script>
+(function() {
+  'use strict';
+
+  const canvas = document.getElementById('hero-tubes-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  /* ── Resize ── */
+  function resize() {
+    const hero = canvas.parentElement;
+    canvas.width  = hero.offsetWidth  * (window.devicePixelRatio || 1);
+    canvas.height = hero.offsetHeight * (window.devicePixelRatio || 1);
+    canvas.style.width  = hero.offsetWidth  + 'px';
+    canvas.style.height = hero.offsetHeight + 'px';
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+  }
+  resize();
+  window.addEventListener('resize', () => { ctx.setTransform(1,0,0,1,0,0); resize(); });
+
+  const W = () => canvas.offsetWidth;
+  const H = () => canvas.offsetHeight;
+
+  /* ── Tube definitions — 6 flowing ribbons (NO GREEN) ── */
+  const TUBES = [
+    {
+      /* Deep violet — leftmost */
+      xBase: 0.08,
+      colors: ['#2e1065','#4c1d95','#7c3aed','#a855f7'],
+      width: 44,
+      glowWidth: 130,
+      phase: 0,
+      speed: 0.09,   /* slower = smoother */
+      amp: 0.062,
+      freq: 0.7,     /* lower freq = longer waves = smoother */
+      offset: 0,
+    },
+    {
+      /* Electric blue */
+      xBase: 0.26,
+      colors: ['#0c1a4a','#1e3a8a','#2563eb','#60a5fa'],
+      width: 38,
+      glowWidth: 105,
+      phase: 1.4,
+      speed: 0.11,
+      amp: 0.058,
+      freq: 0.65,
+      offset: 0.5,
+    },
+    {
+      /* Cyan-teal — wide center ribbon */
+      xBase: 0.5,
+      colors: ['#0e4f6e','#0e7490','#06b6d4','#67e8f9'],
+      width: 54,
+      glowWidth: 150,
+      phase: 2.6,
+      speed: 0.08,   /* slowest = most dramatic */
+      amp: 0.082,
+      freq: 0.6,
+      offset: 1.0,
+    },
+    {
+      /* Deep indigo — replaces green */
+      xBase: 0.67,
+      colors: ['#1e1b4b','#3730a3','#6366f1','#a5b4fc'],
+      width: 34,
+      glowWidth: 95,
+      phase: 0.7,
+      speed: 0.10,
+      amp: 0.05,
+      freq: 0.75,
+      offset: 1.5,
+    },
+    {
+      /* Hot pink-magenta */
+      xBase: 0.82,
+      colors: ['#500724','#9d174d','#ec4899','#f9a8d4'],
+      width: 42,
+      glowWidth: 115,
+      phase: 3.8,
+      speed: 0.095,
+      amp: 0.068,
+      freq: 0.72,
+      offset: 2.0,
+    },
+    {
+      /* Violet-rose — far right */
+      xBase: 0.95,
+      colors: ['#3b0764','#7e22ce','#c084fc','#e879f9'],
+      width: 30,
+      glowWidth: 85,
+      phase: 2.0,
+      speed: 0.12,
+      amp: 0.045,
+      freq: 0.8,
+      offset: 2.5,
+    },
+  ];
+
+  /* ── Compute tube spine points — smoother ── */
+  function getSpinePoints(tube, t, numPts) {
+    const pts = [];
+    const w   = W();
+    const h   = H();
+
+    for (let i = 0; i <= numPts; i++) {
+      const progress = i / numPts;
+      const y = progress * h;
+
+      /* Gentler multi-layer sine — lower multipliers = smoother curves */
+      const wave1 = Math.sin(progress * Math.PI * tube.freq       + t * tube.speed         + tube.phase    ) * tube.amp       * w;
+      const wave2 = Math.sin(progress * Math.PI * tube.freq * 1.6 + t * tube.speed * 1.1   + tube.phase + 1) * tube.amp * 0.3 * w;
+      const wave3 = Math.cos(progress * Math.PI * tube.freq * 0.5 + t * tube.speed * 0.5   + tube.phase + 2) * tube.amp * 0.15* w;
+
+      const x = tube.xBase * w + wave1 + wave2 + wave3;
+      pts.push({ x, y });
+    }
+    return pts;
+  }
+
+  /* ── Draw one smooth tube ── */
+  function drawTube(tube, t) {
+    const h   = H();
+    const pts = getSpinePoints(tube, t, 90);
+
+    /* Build gradient along the tube */
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    const colors = tube.colors;
+    colors.forEach((c, i) => {
+      grad.addColorStop(i / (colors.length - 1), c);
+    });
+
+    /* 5 rendering passes: outermost halo → body → bright core */
+    const passes = [
+      { width: tube.glowWidth * 1.2, alpha: 0.03 },
+      { width: tube.glowWidth * 0.7, alpha: 0.07 },
+      { width: tube.glowWidth * 0.4, alpha: 0.13 },
+      { width: tube.width * 1.6,     alpha: 0.22 },
+      { width: tube.width,           alpha: 0.70 },
+      { width: tube.width * 0.4,     alpha: 0.92 }, /* bright core */
+    ];
+
+    passes.forEach(pass => {
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+
+      /* Catmull-Rom smooth curve through pts */
+      for (let i = 1; i < pts.length - 2; i++) {
+        const cp1x = pts[i].x + (pts[i+1].x - pts[i-1].x) / 6;
+        const cp1y = pts[i].y + (pts[i+1].y - pts[i-1].y) / 6;
+        const cp2x = pts[i+1].x - (pts[i+2].x - pts[i].x) / 6;
+        const cp2y = pts[i+1].y - (pts[i+2].y - pts[i].y) / 6;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pts[i+1].x, pts[i+1].y);
+      }
+
+      ctx.strokeStyle     = grad;
+      ctx.lineWidth       = pass.width;
+      ctx.globalAlpha     = pass.alpha;
+      ctx.lineCap         = 'round';
+      ctx.lineJoin        = 'round';
+      ctx.stroke();
+    });
+
+    ctx.globalAlpha = 1;
+  }
+
+  /* ── Background: deep dark with subtle color vignette ── */
+  function drawBackground() {
+    const w = W(), h = H();
+
+    /* Base: near-black deep space */
+    ctx.fillStyle = '#03010d';
+    ctx.fillRect(0, 0, w, h);
+
+    /* Subtle center glow — purple hint */
+    const cg = ctx.createRadialGradient(w*0.5, h*0.4, 0, w*0.5, h*0.4, w*0.7);
+    cg.addColorStop(0,   'rgba(124,58,237,0.08)');
+    cg.addColorStop(0.5, 'rgba(6,182,212,0.04)');
+    cg.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = cg;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  /* ── Particle sparkles along tubes ── */
+  const sparks = [];
+  function spawnSparks(tubes, t) {
+    if (sparks.length < 80) {
+      const tube = TUBES[Math.floor(Math.random() * TUBES.length)];
+      const progress = Math.random();
+      const w = W(), h = H();
+      const wave = Math.sin(progress * Math.PI * tube.freq + t * tube.speed + tube.phase) * tube.amp * w;
+      sparks.push({
+        x: tube.xBase * w + wave + (Math.random() - 0.5) * tube.width,
+        y: progress * h,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.3) * -0.8,
+        r: Math.random() * 2.5 + 0.5,
+        life: 1,
+        decay: Math.random() * 0.015 + 0.008,
+        color: tube.colors[Math.floor(Math.random() * tube.colors.length)],
+      });
+    }
+  }
+
+  function drawSparks() {
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const s = sparks[i];
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2);
+      ctx.fillStyle   = s.color;
+      ctx.globalAlpha = s.life * 0.85;
+      ctx.fill();
+
+      /* Glow around spark */
+      const sg = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 4 * s.life);
+      sg.addColorStop(0, s.color.replace(')', ',0.4)').replace('rgb', 'rgba').replace('#', 'rgba(').split('rgba(').pop());
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * 4 * s.life, 0, Math.PI * 2);
+      ctx.fillStyle   = s.color;
+      ctx.globalAlpha = s.life * 0.15;
+      ctx.fill();
+
+      s.x += s.vx; s.y += s.vy; s.life -= s.decay;
+      if (s.life <= 0) sparks.splice(i, 1);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ── Scanline overlay — subtle futuristic feel ── */
+  function drawScanlines() {
+    const w = W(), h = H();
+    ctx.globalAlpha = 0.025;
+    ctx.fillStyle   = 'rgba(0,0,0,1)';
+    for (let y = 0; y < h; y += 3) {
+      ctx.fillRect(0, y, w, 1);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ── Top & bottom vignette so text is readable ── */
+  function drawVignette() {
+    const w = W(), h = H();
+
+    /* Top gradient — darkens from top */
+    const topG = ctx.createLinearGradient(0, 0, 0, h * 0.35);
+    topG.addColorStop(0, 'rgba(3,1,13,0.7)');
+    topG.addColorStop(1, 'rgba(3,1,13,0)');
+    ctx.fillStyle = topG;
+    ctx.fillRect(0, 0, w, h * 0.35);
+
+    /* Bottom gradient */
+    const botG = ctx.createLinearGradient(0, h * 0.65, 0, h);
+    botG.addColorStop(0, 'rgba(3,1,13,0)');
+    botG.addColorStop(1, 'rgba(3,1,13,0.8)');
+    ctx.fillStyle = botG;
+    ctx.fillRect(0, h * 0.65, w, h * 0.35);
+
+    /* Center readable zone — very subtle darkening behind text */
+    const centG = ctx.createRadialGradient(w/2, h/2, w*0.05, w/2, h/2, w*0.45);
+    centG.addColorStop(0, 'rgba(3,1,13,0.3)');
+    centG.addColorStop(1, 'rgba(3,1,13,0)');
+    ctx.fillStyle = centG;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  /* ── Main loop — frame-rate independent smooth ── */
+  let t = 0;
+  let lastRaf = null;
+
+  function animate(ts) {
+    if (lastRaf === null) lastRaf = ts;
+    const dt = Math.min((ts - lastRaf) / 1000, 0.033); /* cap at 30fps equiv */
+    lastRaf = ts;
+    t += dt;
+
+    const w = W(), h = H();
+    ctx.clearRect(0, 0, w, h);
+
+    drawBackground();
+
+    /* Draw tubes back → front (larger glows first) */
+    ctx.save();
+    TUBES.slice().reverse().forEach(tube => drawTube(tube, t));
+    ctx.restore();
+
+    /* Sparks */
+    spawnSparks(TUBES, t);
+    drawSparks();
+
+    drawScanlines();
+    drawVignette();
+
+    requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
+
+  console.log('✅ Hero Flowing Tubes — RealAgent.ai');
+})();
+</script>
 
     <div class="hero-content">
       <div class="hero-badge reveal-item">
@@ -1010,7 +1330,7 @@
       pointers.push(p);
     }
   }, { passive: true })
-  
+
   function correctDX(d) { const ar = canvas.width/canvas.height; return ar < 1 ? d*ar : d; }
   function correctDY(d) { const ar = canvas.width/canvas.height; return ar > 1 ? d/ar : d; }
  
