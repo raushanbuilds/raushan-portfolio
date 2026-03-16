@@ -1,1178 +1,2185 @@
-<!DOCTYPE html>
+x<!DOCTYPE html>
+
 <html lang="en">
 
+
+
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
   <title>RealAgentai — AI Systems for Real Estate Agents</title>
+
   <meta name="description"
+
     content="RealAgentai builds AI voice agents, WhatsApp bots & smart automation exclusively for real estate agents. Close more deals while you sleep.">
+
   <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css">
+
 </head>
+
+
 
 <body>
 
-  <!-- NAVIGATION -->
+
+
   <nav class="navbar" id="navbar">
+
     <a href="#" class="nav-logo"><img src="logo.jpg.jpeg" alt="RealAgentai Logo" style="height: 40px; width: auto;"></a>
+
     <div class="nav-links" id="navLinks">
+
       <a href="#hero">Home</a>
+
       <a href="#services">Services</a>
+
       <a href="#about">About</a>
+
       <a href="#work">Work</a>
+
       <a href="#reviews">Reviews</a>
+
       <a href="#contact-form">Contact</a>
+
     </div>
+
     <div class="nav-right">
+
       <button class="hamburger" id="hamburger" aria-label="Menu">
+
         <span></span><span></span><span></span>
+
       </button>
+
     </div>
+
   </nav>
 
-  <!-- HERO SECTION -->
+
+
   <section class="hero" id="hero">
+<style>
+/* ── Hero container must be relative ── */
+.hero,
+#hero,
+[class*="hero"] {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* ── Canvas background ── */
+#hero-cube-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* ── Hero content UPAR rahega canvas ke ── */
+.hero > *:not(#hero-cube-canvas),
+#hero > *:not(#hero-cube-canvas),
+[class*="hero"] > *:not(#hero-cube-canvas) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Mobile: simpler version ── */
+@media (max-width: 768px) {
+  #hero-cube-canvas { opacity: 0.5; }
+}
+</style>
+
+<canvas id="hero-cube-canvas"></canvas>
+
+<script>
+(function() {
+  const canvas = document.getElementById('hero-cube-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  /* ── Resize handler ── */
+  function resize() {
+    const hero = canvas.parentElement;
+    canvas.width  = hero.offsetWidth;
+    canvas.height = hero.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── Color palette — Blue + Purple ── */
+  const COLORS = [
+    'rgba(139, 92, 246,',   /* purple */
+    'rgba(99,  102, 241,',  /* indigo */
+    'rgba(59,  130, 246,',  /* blue   */
+    'rgba(6,   182, 212,',  /* cyan   */
+    'rgba(168,  85, 247,',  /* violet */
+  ];
+
+  /* ── Single cube definition ── */
+  function makeCube() {
+    const isMob = window.innerWidth < 768;
+    const size  = isMob
+      ? 20 + Math.random() * 35
+      : 30 + Math.random() * 60;
+
+    return {
+      x        : Math.random() * canvas.width,
+      y        : Math.random() * canvas.height,
+      size     : size,
+      speedX   : (Math.random() - 0.5) * 0.4,
+      speedY   : (Math.random() - 0.5) * 0.4,
+      rotX     : Math.random() * Math.PI * 2,
+      rotY     : Math.random() * Math.PI * 2,
+      rotSpeedX: (Math.random() - 0.5) * 0.012,
+      rotSpeedY: (Math.random() - 0.5) * 0.012,
+      color    : COLORS[Math.floor(Math.random() * COLORS.length)],
+      alpha    : 0.08 + Math.random() * 0.18,
+      wireOnly : Math.random() > 0.45, /* some solid, some wireframe */
+    };
+  }
+
+  /* ── Create cubes pool ── */
+  const COUNT  = window.innerWidth < 768 ? 10 : 18;
+  const cubes  = Array.from({ length: COUNT }, makeCube);
+
+  /* ── Project 3D → 2D ── */
+  function project3D(px, py, pz, cx, cy, size) {
+    const fov  = size * 3.5;
+    const dist = fov / (fov + pz);
+    return {
+      x: cx + px * dist,
+      y: cy + py * dist,
+      z: pz,
+    };
+  }
+
+  /* ── Get 8 rotated cube vertices ── */
+  function getCubeVertices(cx, cy, s, rX, rY) {
+    const h    = s / 2;
+    const raw  = [
+      [-h,-h,-h],[h,-h,-h],[h,h,-h],[-h,h,-h],
+      [-h,-h, h],[h,-h, h],[h,h, h],[-h,h, h],
+    ];
+
+    return raw.map(([x,y,z]) => {
+      /* rotate Y */
+      let x1 =  x * Math.cos(rY) + z * Math.sin(rY);
+      let z1 = -x * Math.sin(rY) + z * Math.cos(rY);
+      /* rotate X */
+      let y1 =  y * Math.cos(rX) - z1 * Math.sin(rX);
+      let z2 =  y * Math.sin(rX) + z1 * Math.cos(rX);
+      return project3D(x1, y1, z2, cx, cy, s);
+    });
+  }
+
+  /* ── Cube edges — 12 edges of a box ── */
+  const EDGES = [
+    [0,1],[1,2],[2,3],[3,0], /* back face  */
+    [4,5],[5,6],[6,7],[7,4], /* front face */
+    [0,4],[1,5],[2,6],[3,7], /* connectors */
+  ];
+
+  /* ── Draw one cube ── */
+  function drawCube(c) {
+    const verts = getCubeVertices(c.x, c.y, c.size, c.rotX, c.rotY);
+
+    /* Faces (solid, semi-transparent) */
+    if (!c.wireOnly) {
+      const faces = [
+        [0,1,2,3], [4,5,6,7],
+        [0,1,5,4], [2,3,7,6],
+        [0,3,7,4], [1,2,6,5],
+      ];
+      faces.forEach(f => {
+        ctx.beginPath();
+        ctx.moveTo(verts[f[0]].x, verts[f[0]].y);
+        ctx.lineTo(verts[f[1]].x, verts[f[1]].y);
+        ctx.lineTo(verts[f[2]].x, verts[f[2]].y);
+        ctx.lineTo(verts[f[3]].x, verts[f[3]].y);
+        ctx.closePath();
+        ctx.fillStyle = c.color + (c.alpha * 0.3) + ')';
+        ctx.fill();
+      });
+    }
+
+    /* Wireframe edges */
+    ctx.strokeStyle = c.color + (c.wireOnly ? c.alpha : c.alpha * 0.9) + ')';
+    ctx.lineWidth   = c.wireOnly ? 1 : 0.6;
+    EDGES.forEach(([a, b]) => {
+      ctx.beginPath();
+      ctx.moveTo(verts[a].x, verts[a].y);
+      ctx.lineTo(verts[b].x, verts[b].y);
+      ctx.stroke();
+    });
+
+    /* Corner glow dots */
+    verts.forEach(v => {
+      ctx.beginPath();
+      ctx.arc(v.x, v.y, 1.2, 0, Math.PI * 2);
+      ctx.fillStyle = c.color + (c.alpha * 1.5) + ')';
+      ctx.fill();
+    });
+  }
+
+  /* ── Subtle grid overlay ── */
+  function drawGrid() {
+    const gap   = 60;
+    const alpha = 0.04;
+    ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
+    ctx.lineWidth   = 0.5;
+    for (let x = 0; x < canvas.width; x += gap) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += gap) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+  }
+
+  /* ── Gradient vignette ── */
+  function drawVignette() {
+    const grad = ctx.createRadialGradient(
+      canvas.width / 2, canvas.height / 2, canvas.height * 0.1,
+      canvas.width / 2, canvas.height / 2, canvas.height * 0.85
+    );
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.55)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  /* ── Main animation loop ── */
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    /* background */
+    ctx.fillStyle = 'rgba(4, 2, 18, 0)'; /* transparent — page bg dikhega */
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    drawGrid();
+
+    /* update + draw cubes */
+    cubes.forEach(c => {
+      c.x    += c.speedX;
+      c.y    += c.speedY;
+      c.rotX += c.rotSpeedX;
+      c.rotY += c.rotSpeedY;
+
+      /* wrap around edges */
+      const margin = c.size * 1.5;
+      if (c.x < -margin)              c.x = canvas.width  + margin;
+      if (c.x > canvas.width + margin) c.x = -margin;
+      if (c.y < -margin)              c.y = canvas.height + margin;
+      if (c.y > canvas.height + margin) c.y = -margin;
+
+      drawCube(c);
+    });
+
+    drawVignette();
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+  console.log('✅ Hero Cube Background — RealAgent.ai');
+})();
+</script>
+
     <canvas id="lightning-canvas"></canvas>
 
-    <div class="hero-cubes-container">
-      <div class="cube cube-1">
-        <div class="cube-inner">
-          <div class="cube-face front"></div>
-          <div class="cube-face back"></div>
-          <div class="cube-face right"></div>
-          <div class="cube-face left"></div>
-          <div class="cube-face top"></div>
-          <div class="cube-face bottom"></div>
-        </div>
-      </div>
-      <div class="cube cube-2">
-        <div class="cube-inner">
-          <div class="cube-face front"></div>
-          <div class="cube-face back"></div>
-          <div class="cube-face right"></div>
-          <div class="cube-face left"></div>
-          <div class="cube-face top"></div>
-          <div class="cube-face bottom"></div>
-        </div>
-      </div>
-      <div class="cube cube-3">
-        <div class="cube-inner">
-          <div class="cube-face front"></div>
-          <div class="cube-face back"></div>
-          <div class="cube-face right"></div>
-          <div class="cube-face left"></div>
-          <div class="cube-face top"></div>
-          <div class="cube-face bottom"></div>
-        </div>
-      </div>
-    </div>
+
 
     <div class="hero-content">
+
       <div class="hero-badge reveal-item">
+
         <span class="pulse-dot"></span>
+
        Available for real estate and other growing businesses.
+
       </div>
+
+
 
       <h1 class="hero-headline reveal-item">
+
         Transform Your Business<br>
+
         With<br>
+
         <span class="gradient-text">Ai   System </span>
+
       </h1>
 
+
+
       <p class="hero-sub reveal-item">
+
         AI voice agents, WhatsApp bots &amp; and automation for real estate and growing businesses.
+
       </p>
 
+
+
       <div class="hero-offer reveal-item">
+
         🎁 Free setup for early clients — limited spots available.
+
       </div>
+
+
 
       <div class="hero-ctas reveal-item">
+
         <a href="https://wa.me/917061409529?text=Hi%20RealAgentai,%20I%20want%20a%20free%20strategy%20call!"
+
           target="_blank" class="btn-primary">💬 Get Free Strategy Call</a>
+
       </div>
+
+
 
       <div class="hero-stats reveal-item">
+
         <div class="stat">
+
           <span class="stat-num">24/7</span>
+
           <span class="stat-label">Lead Response</span>
+
         </div>
+
         <div class="stat-divider"></div>
+
         <div class="stat">
+
           <span class="stat-num">₹20,000</span>
+
           <span class="stat-label">Investment starts at</span>
+
         </div>
+
         <div class="stat-divider"></div>
+
         <div class="stat">
+
           <span class="stat-num">10 Days</span>
+
           <span class="stat-label">Delivery</span>
+
         </div>
+
         <div class="stat-divider"></div>
+
         <div class="stat">
+
           <span class="stat-num">100%</span>
+
           <span class="stat-label">Lead Coverage</span>
+
         </div>
+
       </div>
+
     </div>
+
+
 
     <div class="scroll-indicator reveal-item">
+
       <div class="scroll-line"></div>
+
       <span class="scroll-text">SCROLL</span>
+
     </div>
+
   </section>
 
-  <!-- MARQUEE TICKER -->
+
+
   <div class="marquee-strip">
+
     <div class="marquee-track">
+
       <span class="marquee-content">AI Voice Agents <span class="sep">✦</span> WhatsApp Automation <span
+
           class="sep">✦</span> Lead Follow-Up Bots <span class="sep">✦</span> Site Visit Booking <span
+
           class="sep">✦</span> Real Estate AI Systems <span class="sep">✦</span> Business Automation <span
+
           class="sep">✦</span> 24/7 AI Receptionist <span class="sep">✦</span> Property Info Bots <span
+
           class="sep">✦</span></span>
+
       <span class="marquee-content">AI Voice Agents <span class="sep">✦</span> WhatsApp Automation <span
+
           class="sep">✦</span> Lead Follow-Up Bots <span class="sep">✦</span> Site Visit Booking <span
+
           class="sep">✦</span> Real Estate AI Systems <span class="sep">✦</span> Business Automation <span
+
           class="sep">✦</span> 24/7 AI Receptionist <span class="sep">✦</span> Property Info Bots <span
+
           class="sep">✦</span></span>
+
     </div>
+
   </div>
 
-  <!-- SERVICES SECTION -->
+
+
   <section class="services" id="services">
+
     <div class="container">
+
       <div class="section-header reveal-item">
+
         <span class="section-label"><span class="label-line"></span>WHAT I BUILD</span>
+
         <h2>Systems  That  Capture  and  Convert  Every  Lead</h2>
+
         <p class="section-sub">Capture inquiries, qualify prospects, and convert them into booked calls.</p>
+
       </div>
+
+
 
       <div class="services-grid">
-        <!-- CARD 1: AI Voice Agent -->
+
         <div class="service-card reveal-item">
+
           <div class="service-img-wrap">
+
             <img src="https://images.unsplash.com/photo-1560264280-88b68371db39?w=600&q=85" alt="AI Voice Agent" class="service-img" style="object-position:center center" />
+
             <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(124,58,237,0.3),rgba(10,10,18,0.88))"></div>
+
           </div>
+
           <h3>AI Voice Agent</h3>
+
           <p>Answers calls 24/7, qualifies prospects, and books site visits automatically — so no property inquiry is ever missed.</p>
+
           <span class="service-tag tag-purple">Most Popular</span>
+
         </div>
-        <!-- CARD 2: WhatsApp AI Agent -->
+
         <div class="service-card reveal-item">
+
           <div class="service-img-wrap">
+
             <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=85" alt="WhatsApp AI Agent" class="service-img" style="object-position:center top" />
+
             <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(37,211,102,0.25),rgba(10,10,18,0.88))"></div>
+
           </div>
+
           <h3>WhatsApp AI Agent</h3>
+
           <p>Instantly responds to inquiries, shares property details, and captures leads directly from WhatsApp conversations.</p>
+
           <span class="service-tag tag-green">NEW</span>
+
         </div>
-        <!-- CARD 3: Web Design -->
+
         <div class="service-card reveal-item">
+
           <div class="service-img-wrap">
+
             <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&q=85" alt="Web Design" class="service-img" style="object-position:center center" />
+
             <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(6,182,212,0.25),rgba(10,10,18,0.88))"></div>
+
           </div>
+
           <h3>Web Design &amp; Development</h3>
+
           <p>Conversion-focused websites designed to turn visitors into serious property inquiries and booked site visits.</p>
+
           <span class="service-tag tag-cyan">High Converting</span>
+
         </div>
-        <!-- CARD 4: Lead Automation -->
+
         <div class="service-card reveal-item">
+
           <div class="service-img-wrap">
+
             <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=85" alt="Lead Follow-Up Automation" class="service-img" style="object-position:center top" />
+
             <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(124,58,237,0.25),rgba(10,10,18,0.88))"></div>
+
           </div>
+
           <h3>Landing Page Design</h3>
+
           <p>Landing pages built to turn visitors into qualified leads and booked calls.</p>
+
           <span class="service-tag tag-green-border">High Converting</span>
+
         </div>
-        <!-- CARD 5: Business Automation -->
+
         <div class="service-card reveal-item">
+
           <div class="service-img-wrap">
+
             <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=85" alt="Business Process Automation" class="service-img" style="object-position:center center" />
+
             <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(16,185,129,0.2),rgba(10,10,18,0.88))"></div>
+
           </div>
+
           <h3>Business Process Automation</h3>
+
           <p>Automates repetitive tasks like lead routing, reporting, onboarding, and internal workflows.</p>
+
           <span class="service-tag tag-purple">Time Saving</span>
+
         </div>
-        <!-- CARD 6: Complete AI System -->
+
         <div class="service-card reveal-item">
+
           <div class="service-img-wrap">
+
             <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=600&q=85" alt="Complete AI System" class="service-img" style="object-position:center top" />
+
             <div class="service-img-overlay" style="background:linear-gradient(to bottom,rgba(6,182,212,0.2),rgba(10,10,18,0.88))"></div>
+
           </div>
+
           <h3>Complete AI System (All-in-One)</h3>
+
           <p>AI system that captures, qualifies, follows up, and books clients automatically.</p>
+
           <span class="service-tag tag-cyan">Full AI Stack</span>
+
         </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- ABOUT / FOUNDER SECTION -->
+
+
   <section class="about" id="about">
+
     <div class="container">
+
       <div class="about-grid">
+
         <div class="about-photo reveal-item">
+
           <div class="photo-wrapper">
+
             <img src="about.jpg.jpeg" alt="Raushan Dubey" class="about-img" />
+
           </div>
+
           <div class="float-badge float-badge-tl">
+
             <span class="pulse-dot pulse-dot-green"></span>
+
             <span class="badge-available">Available Now</span>
+
           </div>
+
         </div>
+
+
 
         <div class="about-text reveal-item">
+
           <span class="section-label"><span class="label-line"></span>ABOUT ME</span>
+
           <h2>Real Problems. Real Solutions.</h2>
+
           <p>I'm Raushan Dubey — Founder of RealAgentai. I build AI systems for real estate businesses.</p>
+
           <p>Solo agent or growing agency — I build the exact system you need.</p>
 
+
+
           <div class="skills-tags">
+
             <span class="skill-tag">AI Voice Agents</span>
+
             <span class="skill-tag">WhatsApp Bots</span>
+
             <span class="skill-tag">n8n</span>
+
             <span class="skill-tag">Zapier</span>
+
             <span class="skill-tag">Vapi / Bland AI</span>
+
             <span class="skill-tag">Web Dev</span>
+
             <span class="skill-tag">Real Estate AI</span>
+
             <span class="skill-tag">Lead Automation</span>
+
           </div>
+
+
 
           <a href="https://wa.me/917061409529?text=Hi%20RealAgentai,%20let's%20talk!" target="_blank"
+
             class="btn-primary" style="margin-top:2rem;">Let's Talk →</a>
+
         </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- TOOLS / INTEGRATIONS STRIP -->
+
+
   <section class="tools-strip" id="tools">
+
     <div class="container">
+
       <div class="section-header reveal-item">
+
         <h2>Powered by Leading AI Tools</h2>
+
         <p class="section-sub">Best-in-class tools. Connected for you.</p>
+
       </div>
+
     </div>
+
     <div class="tools-marquee">
+
       <div class="tools-track">
+
         <span class="tool-pill">Make.com</span>
+
         <span class="tool-pill">n8n</span>
+
         <span class="tool-pill">Zapier</span>
+
         <span class="tool-pill">Vapi</span>
+
         <span class="tool-pill">Bland AI</span>
+
         <span class="tool-pill">OpenAI</span>
+
         <span class="tool-pill">WhatsApp API</span>
+
         <span class="tool-pill">Calendly</span>
+
         <span class="tool-pill">Twilio</span>
+
         <span class="tool-pill">Google Calendar</span>
+
         <span class="tool-pill">Make.com</span>
+
         <span class="tool-pill">n8n</span>
+
         <span class="tool-pill">Zapier</span>
+
         <span class="tool-pill">Vapi</span>
+
         <span class="tool-pill">Bland AI</span>
+
         <span class="tool-pill">OpenAI</span>
+
         <span class="tool-pill">WhatsApp API</span>
+
         <span class="tool-pill">Calendly</span>
+
         <span class="tool-pill">Twilio</span>
+
         <span class="tool-pill">Google Calendar</span>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- PORTFOLIO SECTION -->
+
+
   <section class="portfolio" id="work">
+
     <div class="container">
+
       <div class="section-header reveal-item">
+
         <span class="section-label"><span class="label-line"></span>PORTFOLIO</span>
+
         <h2>What I've Built.</h2>
+
         <p class="section-sub">Live demos. Real results.</p>
+
       </div>
+
+
 
       <div class="portfolio-grid">
+
         <div class="portfolio-card reveal-item">
+
           <div class="portfolio-thumb portfolio-thumb-svg">
+
             <svg viewBox="0 0 600 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"
+
               class="thumb-svg">
+
               <defs>
+
                 <radialGradient id="pg1" cx="50%" cy="50%" r="60%">
+
                   <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.25" />
+
                   <stop offset="100%" stop-color="#050508" stop-opacity="0" />
+
                 </radialGradient>
+
                 <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+
                   <stop offset="0%" stop-color="#1a0a3a" />
+
                   <stop offset="100%" stop-color="#0d0d14" />
+
                 </linearGradient>
+
               </defs>
-              <!-- BG -->
+
               <rect width="600" height="200" fill="url(#bg1)" />
+
               <ellipse cx="300" cy="100" rx="200" ry="120" fill="url(#pg1)" />
-              <!-- Smartphone outline -->
+
               <rect x="90" y="30" width="80" height="140" rx="12" ry="12" fill="none" stroke="rgba(255,255,255,0.25)"
+
                 stroke-width="1.5" />
-              <!-- Phone inner screen -->
+
               <rect x="96" y="46" width="68" height="108" rx="4" fill="rgba(124,58,237,0.08)" />
-              <!-- Notch -->
+
               <rect x="118" y="34" width="24" height="6" rx="3" fill="rgba(255,255,255,0.15)" />
-              <!-- Home button -->
+
               <circle cx="130" cy="158" r="5" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
-              <!-- Chat bubble 1 (green, right) -->
+
               <rect x="126" y="56" width="30" height="14" rx="6" fill="#25d366" />
-              <!-- Chat bubble 2 (dark, left) -->
+
               <rect x="100" y="78" width="36" height="14" rx="6" fill="rgba(255,255,255,0.12)" />
-              <!-- Bubble text lines -->
+
               <line x1="105" y1="85" x2="128" y2="85" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"
+
                 stroke-linecap="round" />
-              <!-- Chat bubble 3 (green, right) -->
+
               <rect x="118" y="100" width="38" height="14" rx="6" fill="#25d366" />
-              <!-- Chat bubble 4 (dark, left) -->
+
               <rect x="100" y="122" width="28" height="14" rx="6" fill="rgba(255,255,255,0.1)" />
-              <!-- Connecting dashes -->
+
               <line x1="185" y1="100" x2="310" y2="100" stroke="rgba(124,58,237,0.4)" stroke-width="1.5"
+
                 stroke-dasharray="6 4" />
-              <!-- Dots on line -->
+
               <circle cx="225" cy="100" r="3" fill="rgba(124,58,237,0.6)" />
+
               <circle cx="255" cy="100" r="3" fill="rgba(124,58,237,0.6)" />
+
               <circle cx="285" cy="100" r="3" fill="rgba(124,58,237,0.6)" />
-              <!-- Bot head -->
+
               <rect x="315" y="60" width="80" height="80" rx="16" fill="rgba(124,58,237,0.15)"
+
                 stroke="rgba(124,58,237,0.5)" stroke-width="1.5" />
-              <!-- Bot eyes -->
+
               <circle cx="340" cy="93" r="8" fill="none" stroke="#7c3aed" stroke-width="2" />
+
               <circle cx="340" cy="93" r="4" fill="#7c3aed" />
+
               <circle cx="370" cy="93" r="8" fill="none" stroke="#7c3aed" stroke-width="2" />
+
               <circle cx="370" cy="93" r="4" fill="#7c3aed" />
-              <!-- Bot antenna -->
+
               <line x1="355" y1="60" x2="355" y2="44" stroke="rgba(124,58,237,0.6)" stroke-width="1.5" />
+
               <circle cx="355" cy="40" r="5" fill="#7c3aed" />
-              <!-- Bot mouth -->
+
               <path d="M338 112 Q355 122 372 112" fill="none" stroke="rgba(124,58,237,0.8)" stroke-width="2"
+
                 stroke-linecap="round" />
-              <!-- Glow around bot -->
+
               <ellipse cx="355" cy="100" rx="55" ry="55" fill="none" stroke="rgba(124,58,237,0.18)" stroke-width="1" />
-              <!-- Floating particles -->
+
               <circle cx="460" cy="50" r="3" fill="rgba(124,58,237,0.5)" />
+
               <circle cx="490" cy="80" r="2" fill="rgba(124,58,237,0.3)" />
+
               <circle cx="520" cy="130" r="4" fill="rgba(124,58,237,0.2)" />
+
               <circle cx="480" cy="155" r="2" fill="rgba(124,58,237,0.4)" />
+
               <circle cx="60" cy="60" r="2" fill="rgba(124,58,237,0.3)" />
+
               <circle cx="50" cy="150" r="3" fill="rgba(124,58,237,0.2)" />
+
             </svg>
+
           </div>
+
           <div class="portfolio-info">
+
             <h3>AI WhatsApp Bot — Sharma Properties</h3>
+
             <p>Auto-books site visits on WhatsApp. 24/7.</p>
+
             <a href="https://wa.me/917061409529?text=Hi%20RealAgentai,%20show%20me%20the%20WhatsApp%20bot%20demo!"
+
               target="_blank" class="portfolio-link">View Live Demo →</a>
+
           </div>
+
         </div>
+
         <div class="portfolio-card reveal-item">
+
           <div class="portfolio-thumb portfolio-thumb-svg">
+
             <svg viewBox="0 0 600 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"
+
               class="thumb-svg">
+
               <defs>
+
                 <radialGradient id="pg2" cx="50%" cy="50%" r="60%">
+
                   <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.2" />
+
                   <stop offset="100%" stop-color="#050508" stop-opacity="0" />
+
                 </radialGradient>
+
                 <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+
                   <stop offset="0%" stop-color="#04262e" />
+
                   <stop offset="100%" stop-color="#0d0d14" />
+
                 </linearGradient>
+
               </defs>
-              <!-- BG -->
+
               <rect width="600" height="200" fill="url(#bg2)" />
+
               <ellipse cx="300" cy="100" rx="220" ry="130" fill="url(#pg2)" />
-              <!-- Large outer ring -->
+
               <circle cx="300" cy="100" r="85" fill="none" stroke="rgba(6,182,212,0.15)" stroke-width="1" />
-              <!-- Mid ring -->
+
               <circle cx="300" cy="100" r="65" fill="none" stroke="rgba(6,182,212,0.25)" stroke-width="1.5" />
-              <!-- Inner circle platform -->
+
               <circle cx="300" cy="100" r="44" fill="rgba(6,182,212,0.08)" stroke="rgba(6,182,212,0.4)"
+
                 stroke-width="1.5" />
-              <!-- Mic body -->
+
               <rect x="288" y="68" width="24" height="38" rx="12" fill="#06b6d4" />
-              <!-- Mic stand -->
+
               <line x1="300" y1="106" x2="300" y2="124" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" />
-              <!-- Mic base -->
+
               <path d="M286 124 Q300 132 314 124" fill="none" stroke="#06b6d4" stroke-width="2.5"
+
                 stroke-linecap="round" />
-              <!-- Sound waves LEFT -->
+
               <path d="M260 78 Q246 100 260 122" fill="none" stroke="rgba(6,182,212,0.65)" stroke-width="2"
+
                 stroke-linecap="round" />
+
               <path d="M244 66 Q224 100 244 134" fill="none" stroke="rgba(6,182,212,0.4)" stroke-width="2"
+
                 stroke-linecap="round" />
+
               <path d="M228 54 Q200 100 228 146" fill="none" stroke="rgba(6,182,212,0.2)" stroke-width="1.5"
+
                 stroke-linecap="round" />
-              <!-- Sound waves RIGHT -->
+
               <path d="M340 78 Q354 100 340 122" fill="none" stroke="rgba(6,182,212,0.65)" stroke-width="2"
+
                 stroke-linecap="round" />
+
               <path d="M356 66 Q376 100 356 134" fill="none" stroke="rgba(6,182,212,0.4)" stroke-width="2"
+
                 stroke-linecap="round" />
+
               <path d="M372 54 Q400 100 372 146" fill="none" stroke="rgba(6,182,212,0.2)" stroke-width="1.5"
+
                 stroke-linecap="round" />
-              <!-- Phone receiver icon top-right -->
+
               <path d="M510 30 Q518 24 526 30 L530 40 Q522 44 516 38 Q510 46 504 52 L494 56 Q488 50 494 42 Z"
+
                 fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linejoin="round" />
-              <!-- Floating dots -->
+
               <circle cx="460" cy="50" r="3.5" fill="rgba(6,182,212,0.3)" />
+
               <circle cx="150" cy="60" r="2.5" fill="rgba(6,182,212,0.3)" />
+
               <circle cx="130" cy="145" r="3" fill="rgba(6,182,212,0.25)" />
+
               <circle cx="475" cy="155" r="4" fill="rgba(6,182,212,0.2)" />
+
               <circle cx="80" cy="100" r="2" fill="rgba(6,182,212,0.35)" />
+
               <circle cx="520" cy="100" r="2.5" fill="rgba(6,182,212,0.3)" />
+
             </svg>
+
           </div>
+
           <div class="portfolio-info">
+
             <h3>AI Voice Agent — Property Inquiry Handler</h3>
+
             <p>Handles property calls. No human needed.</p>
+
             <a href="https://wa.me/917061409529?text=Hi%20RealAgentai,%20I%20want%20to%20hear%20the%20voice%20agent%20demo!"
+
               target="_blank" class="portfolio-link">Hear Demo Call →</a>
+
           </div>
+
         </div>
+
         <div class="portfolio-card reveal-item">
+
           <div class="portfolio-thumb portfolio-thumb-svg">
+
             <svg viewBox="0 0 600 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"
+
               class="thumb-svg">
+
               <defs>
+
                 <radialGradient id="pg3" cx="50%" cy="50%" r="60%">
+
                   <stop offset="0%" stop-color="#10b981" stop-opacity="0.2" />
+
                   <stop offset="100%" stop-color="#050508" stop-opacity="0" />
+
                 </radialGradient>
+
                 <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+
                   <stop offset="0%" stop-color="#041a0e" />
+
                   <stop offset="100%" stop-color="#0d0d14" />
+
                 </linearGradient>
+
                 <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+
                   <stop offset="0%" stop-color="#10b981" />
+
                   <stop offset="100%" stop-color="rgba(16,185,129,0.4)" />
+
                 </linearGradient>
+
               </defs>
-              <!-- BG -->
+
               <rect width="600" height="200" fill="url(#bg3)" />
+
               <ellipse cx="300" cy="100" rx="210" ry="120" fill="url(#pg3)" />
-              <!-- Clock top-center -->
+
               <circle cx="300" cy="38" r="18" fill="none" stroke="rgba(16,185,129,0.5)" stroke-width="1.5" />
+
               <line x1="300" y1="38" x2="300" y2="26" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+
               <line x1="300" y1="38" x2="309" y2="42" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
-              <!-- Flow boxes -->
-              <!-- Box 1: LEAD (purple) -->
+
               <rect x="80" y="75" width="90" height="50" rx="10" fill="rgba(124,58,237,0.2)"
+
                 stroke="rgba(124,58,237,0.6)" stroke-width="1.5" />
+
               <text x="125" y="96" font-family="sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,0.5)"
+
                 text-anchor="middle" letter-spacing="1">LEAD IN</text>
-              <!-- Lead icon inside -->
+
               <circle cx="125" cy="110" r="8" fill="rgba(124,58,237,0.4)" />
+
               <text x="125" y="114" font-family="sans-serif" font-size="10" fill="white" text-anchor="middle">✦</text>
-              <!-- Arrow 1 -->
+
               <line x1="172" y1="100" x2="218" y2="100" stroke="rgba(16,185,129,0.6)" stroke-width="2"
+
                 stroke-dasharray="5 3" />
+
               <polygon points="218,94 232,100 218,106" fill="rgba(16,185,129,0.8)" />
-              <!-- Box 2: Gear (cyan) -->
+
               <rect x="234" y="75" width="90" height="50" rx="10" fill="rgba(6,182,212,0.15)"
+
                 stroke="rgba(6,182,212,0.5)" stroke-width="1.5" />
-              <!-- Gear shape -->
+
               <circle cx="279" cy="100" r="14" fill="none" stroke="#06b6d4" stroke-width="2" />
+
               <circle cx="279" cy="100" r="7" fill="rgba(6,182,212,0.3)" stroke="#06b6d4" stroke-width="1.5" />
-              <!-- Gear teeth -->
+
               <rect x="275" y="82" width="8" height="6" rx="2" fill="#06b6d4" />
+
               <rect x="275" y="112" width="8" height="6" rx="2" fill="#06b6d4" />
+
               <rect x="261" y="96" width="6" height="8" rx="2" fill="#06b6d4" />
+
               <rect x="291" y="96" width="6" height="8" rx="2" fill="#06b6d4" />
-              <!-- Arrow 2 -->
+
               <line x1="326" y1="100" x2="370" y2="100" stroke="rgba(16,185,129,0.6)" stroke-width="2"
+
                 stroke-dasharray="5 3" />
+
               <polygon points="370,94 384,100 370,106" fill="rgba(16,185,129,0.8)" />
-              <!-- Box 3: Checkmark (green) -->
+
               <rect x="386" y="75" width="90" height="50" rx="10" fill="rgba(16,185,129,0.15)"
+
                 stroke="rgba(16,185,129,0.6)" stroke-width="1.5" />
+
               <circle cx="431" cy="100" r="16" fill="rgba(16,185,129,0.25)" stroke="#10b981" stroke-width="1.5" />
+
               <polyline points="421,100 428,108 442,92" fill="none" stroke="#10b981" stroke-width="2.5"
+
                 stroke-linecap="round" stroke-linejoin="round" />
-              <!-- Bar chart bottom -->
+
               <rect x="220" y="162" width="14" height="22" rx="3" fill="url(#barGrad)" opacity="0.5" />
+
               <rect x="240" y="152" width="14" height="32" rx="3" fill="url(#barGrad)" opacity="0.7" />
+
               <rect x="260" y="140" width="14" height="44" rx="3" fill="url(#barGrad)" opacity="0.9" />
-              <!-- Bar chart baseline -->
+
               <line x1="215" y1="184" x2="282" y2="184" stroke="rgba(16,185,129,0.3)" stroke-width="1" />
-              <!-- Floating particles -->
+
               <circle cx="70" cy="50" r="3" fill="rgba(16,185,129,0.3)" />
+
               <circle cx="530" cy="55" r="2.5" fill="rgba(16,185,129,0.25)" />
+
               <circle cx="540" cy="155" r="3.5" fill="rgba(16,185,129,0.2)" />
+
               <circle cx="60" cy="160" r="2" fill="rgba(16,185,129,0.3)" />
+
             </svg>
+
           </div>
+
           <div class="portfolio-info">
+
             <h3>Lead Follow-Up Automation System</h3>
+
             <p>Every lead followed up in 60 seconds.</p>
+
             <a href="https://wa.me/917061409529?text=Hi%20RealAgentai,%20show%20me%20the%20lead%20automation%20demo!"
+
               target="_blank" class="portfolio-link">See How It Works →</a>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- TESTIMONIALS SECTION -->
+
+
   <section class="testimonials" id="reviews">
+
     <div class="container">
+
       <div class="section-header reveal-item">
+
         <span class="section-label"><span class="label-line"></span>SOCIAL PROOF</span>
+
         <h2>What Clients Say</h2>
+
       </div>
+
+
 
       <div class="testimonials-grid">
+
         <div class="testimonial-card reveal-item">
+
           <span class="testimonial-deco">"</span>
+
           <div class="testimonial-stars">★★★★★</div>
+
           <p class="testimonial-quote">"Raushan built us a stunning website in 5 days. Our online inquiries doubled
+
             within the first month."</p>
+
           <div class="testimonial-author">
+
             <div class="author-avatar" style="background:linear-gradient(135deg,#7c3aed,#06b6d4)">AK</div>
+
             <div>
+
               <span class="author-name">Amit Kumar</span>
+
               <span class="author-role">Owner, AK Electronics Store</span>
+
             </div>
+
           </div>
+
         </div>
+
         <div class="testimonial-card reveal-item">
+
           <span class="testimonial-deco">"</span>
+
           <div class="testimonial-stars">★★★★★</div>
+
           <p class="testimonial-quote">"The AI voice agent handles appointment bookings 24/7 with zero human
+
             involvement. Like a receptionist that never sleeps."</p>
+
           <div class="testimonial-author">
+
             <div class="author-avatar" style="background:linear-gradient(135deg,#06b6d4,#10b981)">PS</div>
+
             <div>
+
               <span class="author-name">Dr. Priya Singh</span>
+
               <span class="author-role">Founder, HealthFirst Clinic</span>
+
             </div>
+
           </div>
+
         </div>
+
         <div class="testimonial-card reveal-item">
+
           <span class="testimonial-deco">"</span>
+
           <div class="testimonial-stars">★★★★★</div>
+
           <p class="testimonial-quote">"The automation system saves us 20+ hours weekly. Lead follow-ups, invoices,
+
             onboarding — all done."</p>
+
           <div class="testimonial-author">
+
             <div class="author-avatar" style="background:linear-gradient(135deg,#7c3aed,#10b981)">RV</div>
+
             <div>
+
               <span class="author-name">Rahul Verma</span>
+
               <span class="author-role">CEO, GrowthEdge Solutions</span>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- LEAD CAPTURE FORM SECTION -->
+
+
   <section class="contact-form-section" id="contact-form">
+
     <div class="cf-inner reveal-item">
 
-      <!-- HEADER -->
+
+
       <div class="cf-header">
+
         <span class="section-label"><span class="label-line"></span>GET STARTED</span>
+
         <h2 class="cf-heading">Tell Me About Your Project.</h2>
+
         <p class="cf-sub">I'll get back to you within 24 hours.</p>
+
       </div>
 
-      <!-- FORM CARD -->
+
+
       <div class="contact-form-card" id="contactFormCard">
+
         <form id="leadForm" action="https://formspree.io/f/your-form-id" method="POST">
+
           <div class="form-row form-row-2">
+
             <div class="form-group">
+
               <label for="cf-name">Full Name *</label>
+
               <input type="text" id="cf-name" name="name" placeholder="Your full name" required>
+
             </div>
+
             <div class="form-group">
+
               <label for="cf-phone">Phone Number *</label>
+
               <input type="tel" id="cf-phone" name="phone" placeholder="+91 98765 43210" required>
+
             </div>
+
           </div>
 
+
+
           <div class="form-group">
+
             <label for="cf-email">Email Address *</label>
+
             <input type="email" id="cf-email" name="email" placeholder="you@example.com" required>
+
           </div>
 
+
+
           <div class="form-group">
+
             <label for="cf-website">Website URL</label>
+
             <input type="url" id="cf-website" name="website" placeholder="yourwebsite.com (optional)">
+
           </div>
 
+
+
           <div class="form-group">
+
             <label for="cf-service">Service Required *</label>
+
             <select id="cf-service" name="service" required>
+
               <option value="" disabled selected>-- Select a service --</option>
+
               <option value="AI Voice Agent">🤖 AI Voice Agent</option>
+
               <option value="WhatsApp AI Agent">💬 WhatsApp AI Agent</option>
+
               <option value="Web Design & Development">🌐 Web Design &amp; Development</option>
+
               <option value="Lead Follow-Up Automation">⚡ Lead Follow-Up Automation</option>
+
               <option value="Site Visit Booking System">📅 Site Visit Booking System</option>
+
               <option value="Business Process Automation">🔄 Business Process Automation</option>
+
               <option value="Complete AI System (All-in-One)">🎯 Complete AI System (All-in-One)</option>
+
             </select>
+
           </div>
 
+
+
           <div class="form-group">
+
             <label for="cf-budget">Project Budget *</label>
+
             <select id="cf-budget" name="budget" required>
+
               <option value="" disabled selected>-- Select your budget --</option>
+
               <option value="15K-30K">₹15,000 – ₹30,000 (Starter)</option>
+
               <option value="30K-60K">₹30,000 – ₹60,000 (Growth)</option>
+
               <option value="60K-1L">₹60,000 – ₹1,00,000 (Professional)</option>
+
               <option value="1L-3L">₹1,00,000 – ₹3,00,000 (Business)</option>
+
               <option value="3L-10L">₹3,00,000 – ₹10,00,000 (Enterprise)</option>
+
               <option value="10L+">₹10,00,000+ (Custom / Large Scale)</option>
+
             </select>
+
           </div>
 
+
+
           <div class="form-group">
+
             <label for="cf-message">Tell me about your business</label>
+
             <textarea id="cf-message" name="message" rows="4" placeholder="What does your business do? What's your biggest challenge right now?" style="resize:vertical"></textarea>
+
           </div>
+
+
 
           <button type="submit" class="form-submit-btn">Submit My Project Details →</button>
+
           <p class="form-trust-text">🔒 Your info is private. No spam, ever.</p>
+
         </form>
 
-        <!-- Success State -->
+
+
         <div class="form-success" id="formSuccess" style="display:none;">
+
           <span class="form-success-icon">✅</span>
+
           <h3>Request Received!</h3>
+
           <p>I'll reach out within 24 hours.</p>
+
         </div>
+
       </div>
 
-      <!-- TRUST BADGES -->
+
+
       <div class="cf-trust-badges">
+
         <span class="cf-badge">💬 24hr Response</span>
+
         <span class="cf-badge">📞 Free Strategy Call</span>
+
         <span class="cf-badge">🔒 100% Confidential</span>
+
       </div>
+
+
 
     </div>
+
   </section>
 
-  <!-- SOCIAL / CONNECT SECTION -->
+
+
   <section class="social-section" id="contact">
+
     <div class="container">
+
       <div class="section-header reveal-item">
+
         <h2>Find Me Everywhere</h2>
+
         <p class="section-sub">DM on any platform — I respond within hours.</p>
+
       </div>
+
+
 
       <div class="social-buttons reveal-item">
+
         <a href="https://wa.me/917061409529" target="_blank" class="social-btn social-whatsapp">
+
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+
             <path
+
               d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+
           </svg>
+
           WhatsApp
+
         </a>
+
         <a href="https://instagram.com/raushandubay" target="_blank" class="social-btn social-instagram">
+
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+
             <path
+
               d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+
           </svg>
+
           Instagram
+
         </a>
+
         <a href="https://linkedin.com/in/raushandubey" target="_blank" class="social-btn social-linkedin">
+
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+
             <path
+
               d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+
           </svg>
+
           LinkedIn
+
         </a>
+
         <a href="tel:+917061409529" class="social-btn social-phone">
+
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+
             <path
+
               d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+
           </svg>
+
           Call Now
+
         </a>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- FINAL CTA BANNER -->
+
+
   <section class="final-cta">
+
     <div class="cta-banner">
+
       <div class="cta-glow"></div>
+
       <div class="cta-content reveal-item">
+
         <span class="cta-label">LIMITED OFFER</span>
+
         <h2>Let's Build Your AI System.</h2>
+
         <p>Free 30-min call. No pressure.</p>
+
         <p class="cta-urgency">⚡ 1 spots left this month.</p>
+
         <div class="cta-buttons">
+
           <a href="https://wa.me/917061409529?text=Hi%20RealAgentai,%20I%20want%20to%20book%20my%20free%20strategy%20call!"
+
             target="_blank" class="btn-primary">💬 WhatsApp Me Now</a>
+
           <a href="tel:+917061409529" class="btn-secondary">📞 Call Directly</a>
+
         </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- FOOTER -->
+
+
   <footer class="site-footer">
+
     <div class="footer-inner">
+
       <div class="footer-left">
+
         <a href="#" class="nav-logo"><img src="logo.jpg.jpeg" alt="RealAgentai Logo" style="height: 40px; width: auto;"></a>
+
       </div>
+
       <div class="footer-center">
+
         <p>© 2026 RealAgentai — Raushan Dubey. All rights reserved.</p>
+
       </div>
+
       <div class="footer-right">
+
         <a href="#services">Services</a>
+
         <a href="#work">Work</a>
+
         <a href="#contact">Contact</a>
+
       </div>
+
     </div>
+
   </footer>
+
+
 
   <script src="script.js"></script>
 
-  <!-- FAST COLORFUL CURSOR -->
+
+
   <script>
+
   (function(){
+
     var dot  = document.getElementById('c-dot');
+
     var ring = document.getElementById('c-ring');
+
     if(!dot||!ring) return;
+
     var C=[[255,80,140],[180,50,255],[90,50,240],[0,195,215],[0,205,120],[255,175,25],[255,95,15],[45,125,250]];
+
     var mx=0,my=0,rx=0,ry=0,pts=[];
+
     window.addEventListener('mousemove',function(e){
+
       mx=e.clientX; my=e.clientY;
+
       dot.style.left=mx+'px'; dot.style.top=my+'px';
+
       for(var i=0;i<2;i++){
+
         var c=C[Math.random()*C.length|0];
+
         pts.push({x:mx+(Math.random()-.5)*8,y:my+(Math.random()-.5)*8,r:Math.random()*4+2,vx:(Math.random()-.5)*2.5,vy:(Math.random()-.5)*2.5,life:1,d:Math.random()*.04+.03,c:c});
+
       }
+
     },{passive:true});
+
     (function loop(){rx+=(mx-rx)*.22;ry+=(my-ry)*.22;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+
     var cv=document.createElement('canvas');
+
     cv.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:999995;';
+
     document.body.appendChild(cv);
+
     var ct=cv.getContext('2d');
+
     function rsz(){cv.width=innerWidth;cv.height=innerHeight;} rsz();
+
     window.addEventListener('resize',rsz);
+
     (function draw(){
+
       ct.clearRect(0,0,cv.width,cv.height);
+
       ct.globalCompositeOperation='lighter';
+
       pts=pts.filter(function(p){return p.life>0;});
+
       for(var i=0;i<pts.length;i++){
+
         var p=pts[i],r=p.c[0],g=p.c[1],b=p.c[2];
+
         var gd=ct.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*p.life*2.5);
+
         gd.addColorStop(0,'rgba('+r+','+g+','+b+','+(p.life*.85)+')');
+
         gd.addColorStop(1,'rgba('+r+','+g+','+b+',0)');
+
         ct.beginPath();ct.arc(p.x,p.y,p.r*p.life*2.5,0,Math.PI*2);ct.fillStyle=gd;ct.fill();
+
         p.x+=p.vx;p.y+=p.vy;p.vx*=.94;p.vy*=.94;p.vy-=.05;p.life-=p.d;p.r*=.97;
+
       }
+
       ct.globalCompositeOperation='source-over';
+
       requestAnimationFrame(draw);
+
     })();
+
     window.addEventListener('click',function(e){
+
       for(var i=0;i<14;i++){
+
         var a=(i/14)*Math.PI*2,s=Math.random()*4+2,c=C[Math.random()*C.length|0];
+
         pts.push({x:e.clientX,y:e.clientY,r:Math.random()*5+3,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,d:.025,c:c});
+
       }
+
       var d=document.createElement('div');
+
       d.style.cssText='position:fixed;left:'+e.clientX+'px;top:'+e.clientY+'px;width:0;height:0;border-radius:50%;border:1.5px solid rgba(124,58,237,.7);transform:translate(-50%,-50%);pointer-events:none;z-index:999996;animation:rpl-out .7s ease forwards;';
+
       document.body.appendChild(d);setTimeout(function(){d.remove();},700);
+
     });
+
     document.querySelectorAll('a,button').forEach(function(el){
+
       el.addEventListener('mouseenter',function(){ring.style.width='50px';ring.style.height='50px';ring.style.borderColor='#06b6d4';});
+
       el.addEventListener('mouseleave',function(){ring.style.width='32px';ring.style.height='32px';ring.style.borderColor='rgba(124,58,237,.6)';});
+
     });
+
   })();
+
   </script>
-   
+
 <style>
+  /* ── Canvas fixed background ── */
   #fluid-canvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100dvw;
     height: 100dvh;
-    z-index: 1;           /* content ke peeche, cursor ke neeche */
-    pointer-events: none; /* clicks block nahi karega */
+    z-index: 0;
+    pointer-events: none;  /* clicks block nahi honga */
   }
-  /* Existing #c-dot aur #c-ring ko upar rakho */
-  #c-dot  { z-index: 9999999 !important; }
-  #c-ring { z-index: 9999998 !important; }
+
+  /* ── MOBILE SCROLL FIX ── */
+  /* Body scroll hamesha allow rahega */
+  body {
+    touch-action: pan-y !important;
+    overflow-y: auto !important;
+  }
+
+  /* Mobile par canvas completely hidden — scroll ke liye */
+  @media (max-width: 768px) {
+    #fluid-canvas {
+      display: none !important;
+    }
+  }
 </style>
- 
+
 <canvas id="fluid-canvas"></canvas>
- 
+
 <script>
-(function() {
-  'use strict';
- 
-  const config = {
-    SIM_RESOLUTION      : 128,
-    DYE_RESOLUTION      : 1440,
-    CAPTURE_RESOLUTION  : 512,
-    DENSITY_DISSIPATION : 3.5,
-    VELOCITY_DISSIPATION: 2,
-    PRESSURE            : 0.1,
-    PRESSURE_ITERATIONS : 20,
-    CURL                : 10,
-    SPLAT_RADIUS        : 0.5,
-    SPLAT_FORCE         : 6000,
-    SHADING             : true,
-    COLOR_UPDATE_SPEED  : 10,
-    PAUSED              : false,
-    BACK_COLOR          : { r: 0, g: 0, b: 0 },
-    TRANSPARENT         : true,
+'use strict';
+
+/* ─── MOBILE CHECK — Fluid sim sirf desktop par ─── */
+const isMobile = window.matchMedia('(hover: none)').matches
+  || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
+  || window.innerWidth <= 768;
+
+if (isMobile) {
+  /* Mobile par script execute hi nahi hogi — scroll safe */
+  document.getElementById('fluid-canvas').remove();
+} else {
+
+/* ─── CONFIG ─── */
+const config = {
+  SIM_RESOLUTION      : 128,
+  DYE_RESOLUTION      : 1440,
+  DENSITY_DISSIPATION : 3.5,
+  VELOCITY_DISSIPATION: 2,
+  PRESSURE            : 0.1,
+  PRESSURE_ITERATIONS : 20,
+  CURL                : 10,
+  SPLAT_RADIUS        : 0.5,
+  SPLAT_FORCE         : 6000,
+  SHADING             : true,
+  COLOR_UPDATE_SPEED  : 10,
+  PAUSED              : false,
+  BACK_COLOR          : { r: 0, g: 0, b: 0 },
+  TRANSPARENT         : true,
+};
+
+/* ─── CANVAS SETUP ─── */
+const canvas = document.getElementById('fluid-canvas');
+canvas.width  = canvas.clientWidth;
+canvas.height = canvas.clientHeight;
+
+/* ─── WEBGL INIT ─── */
+function getWebGLContext(canvas) {
+  const params = {
+    alpha: true, depth: false, stencil: false,
+    antialias: false, preserveDrawingBuffer: false
   };
- 
-  /* Mobile pe performance save karo */
-  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
-    || window.matchMedia('(hover: none)').matches;
-  if (isMobile) {
-    config.SIM_RESOLUTION       = 64;
-    config.DYE_RESOLUTION       = 512;
-    config.DENSITY_DISSIPATION  = 4;
-    config.VELOCITY_DISSIPATION = 3;
-    config.SPLAT_FORCE          = 3000;
+  let gl = canvas.getContext('webgl2', params);
+  const isWebGL2 = !!gl;
+  if (!isWebGL2) gl = canvas.getContext('webgl', params)
+                        || canvas.getContext('experimental-webgl', params);
+  let halfFloat, supportLinearFiltering;
+  if (isWebGL2) {
+    gl.getExtension('EXT_color_buffer_float');
+    supportLinearFiltering = gl.getExtension('OES_texture_float_linear');
+  } else {
+    halfFloat = gl.getExtension('OES_texture_half_float');
+    supportLinearFiltering = gl.getExtension('OES_texture_half_float_linear');
   }
- 
-  const canvas = document.getElementById('fluid-canvas');
-  canvas.width  = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
- 
-  function getWebGLContext(canvas) {
-    const params = { alpha: true, depth: false, stencil: false, antialias: false, preserveDrawingBuffer: false };
-    let gl = canvas.getContext('webgl2', params);
-    const isWebGL2 = !!gl;
-    if (!isWebGL2) gl = canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params);
-    let halfFloat, supportLinearFiltering;
-    if (isWebGL2) {
-      gl.getExtension('EXT_color_buffer_float');
-      supportLinearFiltering = gl.getExtension('OES_texture_float_linear');
-    } else {
-      halfFloat = gl.getExtension('OES_texture_half_float');
-      supportLinearFiltering = gl.getExtension('OES_texture_half_float_linear');
+  gl.clearColor(0,0,0,1);
+  const halfFloatTexType = isWebGL2
+    ? gl.HALF_FLOAT
+    : halfFloat && halfFloat.HALF_FLOAT_OES;
+  let formatRGBA, formatRG, formatR;
+  if (isWebGL2) {
+    formatRGBA = getSupportedFormat(gl, gl.RGBA16F, gl.RGBA, halfFloatTexType);
+    formatRG   = getSupportedFormat(gl, gl.RG16F,   gl.RG,   halfFloatTexType);
+    formatR    = getSupportedFormat(gl, gl.R16F,    gl.RED,  halfFloatTexType);
+  } else {
+    formatRGBA = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+    formatRG   = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+    formatR    = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+  }
+  return {
+    gl,
+    ext: { formatRGBA, formatRG, formatR,
+           halfFloatTexType, supportLinearFiltering }
+  };
+}
+
+function getSupportedFormat(gl, internalFormat, format, type) {
+  if (!supportRenderTextureFormat(gl, internalFormat, format, type)) {
+    switch (internalFormat) {
+      case gl.R16F:  return getSupportedFormat(gl, gl.RG16F,   gl.RG,   type);
+      case gl.RG16F: return getSupportedFormat(gl, gl.RGBA16F, gl.RGBA, type);
+      default: return null;
     }
-    gl.clearColor(0, 0, 0, 1);
-    const halfFloatTexType = isWebGL2 ? gl.HALF_FLOAT : halfFloat && halfFloat.HALF_FLOAT_OES;
-    let formatRGBA, formatRG, formatR;
-    if (isWebGL2) {
-      formatRGBA = getSupportedFormat(gl, gl.RGBA16F, gl.RGBA, halfFloatTexType);
-      formatRG   = getSupportedFormat(gl, gl.RG16F,   gl.RG,   halfFloatTexType);
-      formatR    = getSupportedFormat(gl, gl.R16F,    gl.RED,  halfFloatTexType);
-    } else {
-      formatRGBA = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
-      formatRG   = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
-      formatR    = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+  }
+  return { internalFormat, format };
+}
+
+function supportRenderTextureFormat(gl, internalFormat, format, type) {
+  let tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 4, 4, 0, format, type, null);
+  let fbo = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  return gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+}
+
+const { gl, ext } = getWebGLContext(canvas);
+
+/* ─── SHADERS ─── */
+function compileShader(type, source, keywords) {
+  if (keywords) {
+    let kw = '';
+    keywords.forEach(k => kw += '#define ' + k + '\n');
+    source = kw + source;
+  }
+  const s = gl.createShader(type);
+  gl.shaderSource(s, source);
+  gl.compileShader(s);
+  return s;
+}
+
+const baseVS = compileShader(gl.VERTEX_SHADER, `
+  precision highp float;
+  attribute vec2 aPosition;
+  varying vec2 vUv, vL, vR, vT, vB;
+  uniform vec2 texelSize;
+  void main(){
+    vUv = aPosition*.5+.5;
+    vL = vUv-vec2(texelSize.x,0.);
+    vR = vUv+vec2(texelSize.x,0.);
+    vT = vUv+vec2(0.,texelSize.y);
+    vB = vUv-vec2(0.,texelSize.y);
+    gl_Position = vec4(aPosition,0.,1.);
+  }
+`);
+
+const blurVS = compileShader(gl.VERTEX_SHADER, `
+  precision highp float;
+  attribute vec2 aPosition;
+  varying vec2 vUv,vL,vR;
+  uniform vec2 texelSize;
+  void main(){
+    vUv = aPosition*.5+.5;
+    float o = 1.33333333;
+    vL = vUv-texelSize*o;
+    vR = vUv+texelSize*o;
+    gl_Position=vec4(aPosition,0.,1.);
+  }
+`);
+
+const shaders = {
+  blur: compileShader(gl.FRAGMENT_SHADER,`
+    precision mediump float; precision mediump sampler2D;
+    varying vec2 vUv,vL,vR; uniform sampler2D uTexture;
+    void main(){
+      gl_FragColor = texture2D(uTexture,vUv)*.29411764
+        + texture2D(uTexture,vL)*.35294117
+        + texture2D(uTexture,vR)*.35294117;
     }
-    return { gl, ext: { formatRGBA, formatRG, formatR, halfFloatTexType, supportLinearFiltering } };
-  }
- 
-  function getSupportedFormat(gl, internalFormat, format, type) {
-    if (!supportRenderTextureFormat(gl, internalFormat, format, type)) {
-      switch (internalFormat) {
-        case gl.R16F:  return getSupportedFormat(gl, gl.RG16F,   gl.RG,   type);
-        case gl.RG16F: return getSupportedFormat(gl, gl.RGBA16F, gl.RGBA, type);
-        default:       return null;
-      }
+  `),
+  copy: compileShader(gl.FRAGMENT_SHADER,`
+    precision mediump float; precision mediump sampler2D;
+    varying highp vec2 vUv; uniform sampler2D uTexture;
+    void main(){ gl_FragColor=texture2D(uTexture,vUv); }
+  `),
+  clear: compileShader(gl.FRAGMENT_SHADER,`
+    precision mediump float; precision mediump sampler2D;
+    varying highp vec2 vUv; uniform sampler2D uTexture; uniform float value;
+    void main(){ gl_FragColor=value*texture2D(uTexture,vUv); }
+  `),
+  splat: compileShader(gl.FRAGMENT_SHADER,`
+    precision highp float; precision highp sampler2D;
+    varying vec2 vUv; uniform sampler2D uTarget;
+    uniform float aspectRatio; uniform vec3 color;
+    uniform vec2 point; uniform float radius;
+    void main(){
+      vec2 p=vUv-point; p.x*=aspectRatio;
+      vec3 splat=exp(-dot(p,p)/radius)*color;
+      gl_FragColor=vec4(texture2D(uTarget,vUv).xyz+splat,1.);
     }
-    return { internalFormat, format };
+  `),
+  advection: compileShader(gl.FRAGMENT_SHADER,`
+    precision highp float; precision highp sampler2D;
+    varying vec2 vUv; uniform sampler2D uVelocity,uSource;
+    uniform vec2 texelSize,dyeTexelSize; uniform float dt,dissipation;
+    vec4 bilerp(sampler2D s,vec2 uv,vec2 ts){
+      vec2 st=uv/ts-.5; vec2 iu=floor(st); vec2 fu=fract(st);
+      vec4 a=texture2D(s,(iu+vec2(.5,.5))*ts);
+      vec4 b=texture2D(s,(iu+vec2(1.5,.5))*ts);
+      vec4 c=texture2D(s,(iu+vec2(.5,1.5))*ts);
+      vec4 d=texture2D(s,(iu+vec2(1.5,1.5))*ts);
+      return mix(mix(a,b,fu.x),mix(c,d,fu.x),fu.y);
+    }
+    void main(){
+      #ifdef MANUAL_FILTERING
+        vec2 coord=vUv-dt*bilerp(uVelocity,vUv,texelSize).xy*texelSize;
+        vec4 result=bilerp(uSource,coord,dyeTexelSize);
+      #else
+        vec2 coord=vUv-dt*texture2D(uVelocity,vUv).xy*texelSize;
+        vec4 result=texture2D(uSource,coord);
+      #endif
+      gl_FragColor=result/(1.+dissipation*dt);
+    }
+  `, ext.supportLinearFiltering ? null : ['MANUAL_FILTERING']),
+  divergence: compileShader(gl.FRAGMENT_SHADER,`
+    precision mediump float; precision mediump sampler2D;
+    varying highp vec2 vUv,vL,vR,vT,vB; uniform sampler2D uVelocity;
+    void main(){
+      float L=texture2D(uVelocity,vL).x, R=texture2D(uVelocity,vR).x,
+            T=texture2D(uVelocity,vT).y, B=texture2D(uVelocity,vB).y;
+      vec2 C=texture2D(uVelocity,vUv).xy;
+      if(vL.x<0.)L=-C.x; if(vR.x>1.)R=-C.x;
+      if(vT.y>1.)T=-C.y; if(vB.y<0.)B=-C.y;
+      gl_FragColor=vec4(.5*(R-L+T-B),0.,0.,1.);
+    }
+  `),
+  curl: compileShader(gl.FRAGMENT_SHADER,`
+    precision mediump float; precision mediump sampler2D;
+    varying highp vec2 vUv,vL,vR,vT,vB; uniform sampler2D uVelocity;
+    void main(){
+      float L=texture2D(uVelocity,vL).y, R=texture2D(uVelocity,vR).y,
+            T=texture2D(uVelocity,vT).x, B=texture2D(uVelocity,vB).x;
+      gl_FragColor=vec4(.5*(R-L-T+B),0.,0.,1.);
+    }
+  `),
+  vorticity: compileShader(gl.FRAGMENT_SHADER,`
+    precision highp float; precision highp sampler2D;
+    varying vec2 vUv,vL,vR,vT,vB;
+    uniform sampler2D uVelocity,uCurl; uniform float curl,dt;
+    void main(){
+      float L=texture2D(uCurl,vL).x, R=texture2D(uCurl,vR).x,
+            T=texture2D(uCurl,vT).x, B=texture2D(uCurl,vB).x,
+            C=texture2D(uCurl,vUv).x;
+      vec2 f=.5*vec2(abs(T)-abs(B),abs(R)-abs(L));
+      f/=length(f)+.0001; f*=curl*C; f.y*=-1.;
+      vec2 v=texture2D(uVelocity,vUv).xy+f*dt;
+      gl_FragColor=vec4(clamp(v,-1000.,1000.),0.,1.);
+    }
+  `),
+  pressure: compileShader(gl.FRAGMENT_SHADER,`
+    precision mediump float; precision mediump sampler2D;
+    varying highp vec2 vUv,vL,vR,vT,vB;
+    uniform sampler2D uPressure,uDivergence;
+    void main(){
+      float L=texture2D(uPressure,vL).x, R=texture2D(uPressure,vR).x,
+            T=texture2D(uPressure,vT).x, B=texture2D(uPressure,vB).x;
+      float div=texture2D(uDivergence,vUv).x;
+      gl_FragColor=vec4((L+R+B+T-div)*.25,0.,0.,1.);
+    }
+  `),
+  gradSub: compileShader(gl.FRAGMENT_SHADER,`
+    precision mediump float; precision mediump sampler2D;
+    varying highp vec2 vUv,vL,vR,vT,vB;
+    uniform sampler2D uPressure,uVelocity;
+    void main(){
+      float L=texture2D(uPressure,vL).x, R=texture2D(uPressure,vR).x,
+            T=texture2D(uPressure,vT).x, B=texture2D(uPressure,vB).x;
+      vec2 v=texture2D(uVelocity,vUv).xy-vec2(R-L,T-B);
+      gl_FragColor=vec4(v,0.,1.);
+    }
+  `),
+  display: compileShader(gl.FRAGMENT_SHADER,`
+    precision highp float; precision highp sampler2D;
+    varying vec2 vUv,vL,vR,vT,vB; uniform sampler2D uTexture; uniform vec2 texelSize;
+    void main(){
+      vec3 c=texture2D(uTexture,vUv).rgb;
+      #ifdef SHADING
+        float dx=length(texture2D(uTexture,vR).rgb)-length(texture2D(uTexture,vL).rgb);
+        float dy=length(texture2D(uTexture,vT).rgb)-length(texture2D(uTexture,vB).rgb);
+        vec3 n=normalize(vec3(dx,dy,length(texelSize)));
+        c*=clamp(dot(n,vec3(0.,0.,1.))+.7,.7,1.);
+      #endif
+      float a=max(c.r,max(c.g,c.b));
+      gl_FragColor=vec4(c,a);
+    }
+  `, config.SHADING ? ['SHADING'] : []),
+};
+
+/* ─── PROGRAMS ─── */
+function mkProg(vs, fs) {
+  const p = gl.createProgram();
+  gl.attachShader(p, vs); gl.attachShader(p, fs);
+  gl.linkProgram(p);
+  const u = {};
+  const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+  for (let i = 0; i < n; i++) {
+    const name = gl.getActiveUniform(p, i).name;
+    u[name] = gl.getUniformLocation(p, name);
   }
- 
-  function supportRenderTextureFormat(gl, internalFormat, format, type) {
-    let tex = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 4, 4, 0, format, type, null);
-    let fbo = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-    return gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
-  }
- 
-  const { gl, ext } = getWebGLContext(canvas);
- 
-  function compileShader(type, source, keywords) {
-    let src = source;
-    if (keywords) keywords.forEach(k => { src = '#define ' + k + '\n' + src; });
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, src);
-    gl.compileShader(shader);
-    return shader;
-  }
- 
-  const bVert = compileShader(gl.VERTEX_SHADER, `precision highp float;attribute vec2 aPosition;varying vec2 vUv,vL,vR,vT,vB;uniform vec2 texelSize;void main(){vUv=aPosition*.5+.5;vL=vUv-vec2(texelSize.x,0.);vR=vUv+vec2(texelSize.x,0.);vT=vUv+vec2(0.,texelSize.y);vB=vUv-vec2(0.,texelSize.y);gl_Position=vec4(aPosition,0.,1.);}`);
-  const blurV = compileShader(gl.VERTEX_SHADER, `precision highp float;attribute vec2 aPosition;varying vec2 vUv,vL,vR;uniform vec2 texelSize;void main(){vUv=aPosition*.5+.5;float o=1.33333333;vL=vUv-texelSize*o;vR=vUv+texelSize*o;gl_Position=vec4(aPosition,0.,1.);}`);
- 
-  const copyS    = compileShader(gl.FRAGMENT_SHADER, `precision mediump float;precision mediump sampler2D;varying highp vec2 vUv;uniform sampler2D uTexture;void main(){gl_FragColor=texture2D(uTexture,vUv);}`);
-  const clearS   = compileShader(gl.FRAGMENT_SHADER, `precision mediump float;precision mediump sampler2D;varying highp vec2 vUv;uniform sampler2D uTexture;uniform float value;void main(){gl_FragColor=value*texture2D(uTexture,vUv);}`);
-  const splatS   = compileShader(gl.FRAGMENT_SHADER, `precision highp float;precision highp sampler2D;varying vec2 vUv;uniform sampler2D uTarget;uniform float aspectRatio;uniform vec3 color;uniform vec2 point;uniform float radius;void main(){vec2 p=vUv-point.xy;p.x*=aspectRatio;vec3 splat=exp(-dot(p,p)/radius)*color;vec3 base=texture2D(uTarget,vUv).xyz;gl_FragColor=vec4(base+splat,1.);}`);
-  const advS     = compileShader(gl.FRAGMENT_SHADER, `precision highp float;precision highp sampler2D;varying vec2 vUv;uniform sampler2D uVelocity,uSource;uniform vec2 texelSize,dyeTexelSize;uniform float dt,dissipation;vec4 bilerp(sampler2D sam,vec2 uv,vec2 tsize){vec2 st=uv/tsize-.5;vec2 iuv=floor(st);vec2 fuv=fract(st);vec4 a=texture2D(sam,(iuv+vec2(.5,.5))*tsize);vec4 b=texture2D(sam,(iuv+vec2(1.5,.5))*tsize);vec4 c=texture2D(sam,(iuv+vec2(.5,1.5))*tsize);vec4 d=texture2D(sam,(iuv+vec2(1.5,1.5))*tsize);return mix(mix(a,b,fuv.x),mix(c,d,fuv.x),fuv.y);}void main(){vec2 coord=vUv-dt*texture2D(uVelocity,vUv).xy*texelSize;vec4 result=texture2D(uSource,coord);float decay=1.+dissipation*dt;gl_FragColor=result/decay;}`, null);
-  const divS     = compileShader(gl.FRAGMENT_SHADER, `precision mediump float;precision mediump sampler2D;varying highp vec2 vUv,vL,vR,vT,vB;uniform sampler2D uVelocity;void main(){float L=texture2D(uVelocity,vL).x,R=texture2D(uVelocity,vR).x,T=texture2D(uVelocity,vT).y,B=texture2D(uVelocity,vB).y;vec2 C=texture2D(uVelocity,vUv).xy;if(vL.x<0.)L=-C.x;if(vR.x>1.)R=-C.x;if(vT.y>1.)T=-C.y;if(vB.y<0.)B=-C.y;gl_FragColor=vec4(.5*(R-L+T-B),0.,0.,1.);}`);
-  const curlS    = compileShader(gl.FRAGMENT_SHADER, `precision mediump float;precision mediump sampler2D;varying highp vec2 vUv,vL,vR,vT,vB;uniform sampler2D uVelocity;void main(){float L=texture2D(uVelocity,vL).y,R=texture2D(uVelocity,vR).y,T=texture2D(uVelocity,vT).x,B=texture2D(uVelocity,vB).x;gl_FragColor=vec4(.5*(R-L-T+B),0.,0.,1.);}`);
-  const vortS    = compileShader(gl.FRAGMENT_SHADER, `precision highp float;precision highp sampler2D;varying vec2 vUv,vL,vR,vT,vB;uniform sampler2D uVelocity,uCurl;uniform float curl,dt;void main(){float L=texture2D(uCurl,vL).x,R=texture2D(uCurl,vR).x,T=texture2D(uCurl,vT).x,B=texture2D(uCurl,vB).x,C=texture2D(uCurl,vUv).x;vec2 force=.5*vec2(abs(T)-abs(B),abs(R)-abs(L));force/=length(force)+.0001;force*=curl*C;force.y*=-1.;vec2 velocity=texture2D(uVelocity,vUv).xy;velocity+=force*dt;velocity=min(max(velocity,-1000.),1000.);gl_FragColor=vec4(velocity,0.,1.);}`);
-  const presS    = compileShader(gl.FRAGMENT_SHADER, `precision mediump float;precision mediump sampler2D;varying highp vec2 vUv,vL,vR,vT,vB;uniform sampler2D uPressure,uDivergence;void main(){float L=texture2D(uPressure,vL).x,R=texture2D(uPressure,vR).x,T=texture2D(uPressure,vT).x,B=texture2D(uPressure,vB).x,divergence=texture2D(uDivergence,vUv).x;gl_FragColor=vec4((L+R+B+T-divergence)*.25,0.,0.,1.);}`);
-  const gradS    = compileShader(gl.FRAGMENT_SHADER, `precision mediump float;precision mediump sampler2D;varying highp vec2 vUv,vL,vR,vT,vB;uniform sampler2D uPressure,uVelocity;void main(){float L=texture2D(uPressure,vL).x,R=texture2D(uPressure,vR).x,T=texture2D(uPressure,vT).x,B=texture2D(uPressure,vB).x;vec2 velocity=texture2D(uVelocity,vUv).xy;velocity.xy-=vec2(R-L,T-B);gl_FragColor=vec4(velocity,0.,1.);}`);
-  const dispS    = compileShader(gl.FRAGMENT_SHADER, `#define SHADING\nprecision highp float;precision highp sampler2D;varying vec2 vUv,vL,vR,vT,vB;uniform sampler2D uTexture;uniform vec2 texelSize;void main(){vec3 c=texture2D(uTexture,vUv).rgb;vec3 lc=texture2D(uTexture,vL).rgb,rc=texture2D(uTexture,vR).rgb,tc=texture2D(uTexture,vT).rgb,bc=texture2D(uTexture,vB).rgb;float dx=length(rc)-length(lc),dy=length(tc)-length(bc);vec3 n=normalize(vec3(dx,dy,length(texelSize)));float diffuse=clamp(dot(n,vec3(0.,0.,1.))+.7,.7,1.);c*=diffuse;float a=max(c.r,max(c.g,c.b));gl_FragColor=vec4(c,a);}`);
- 
-  function makeProgram(vs, fs) {
-    const prog = gl.createProgram();
-    gl.attachShader(prog, vs);
-    gl.attachShader(prog, fs);
-    gl.linkProgram(prog);
-    const u = {};
-    const n = gl.getProgramParameter(prog, gl.ACTIVE_UNIFORMS);
-    for (let i = 0; i < n; i++) { const name = gl.getActiveUniform(prog, i).name; u[name] = gl.getUniformLocation(prog, name); }
-    return { prog, u, bind() { gl.useProgram(this.prog); } };
-  }
- 
-  const copyP = makeProgram(bVert, copyS);
-  const clearP = makeProgram(bVert, clearS);
-  const splatP = makeProgram(bVert, splatS);
-  const advP   = makeProgram(bVert, advS);
-  const divP   = makeProgram(bVert, divS);
-  const curlP  = makeProgram(bVert, curlS);
-  const vortP  = makeProgram(bVert, vortS);
-  const presP  = makeProgram(bVert, presS);
-  const gradP  = makeProgram(bVert, gradS);
-  const dispP  = makeProgram(bVert, dispS);
- 
+  return { program: p, uniforms: u, bind(){ gl.useProgram(p); } };
+}
+
+const P = {
+  copy     : mkProg(baseVS, shaders.copy),
+  clear    : mkProg(baseVS, shaders.clear),
+  splat    : mkProg(baseVS, shaders.splat),
+  advection: mkProg(baseVS, shaders.advection),
+  diverge  : mkProg(baseVS, shaders.divergence),
+  curl     : mkProg(baseVS, shaders.curl),
+  vorticity: mkProg(baseVS, shaders.vorticity),
+  pressure : mkProg(baseVS, shaders.pressure),
+  gradSub  : mkProg(baseVS, shaders.gradSub),
+  display  : mkProg(baseVS, shaders.display),
+};
+
+/* ─── BLIT ─── */
+const blit = (() => {
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,-1,1,1,1,1,-1]), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0,1,2,0,2,3]), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
   gl.enableVertexAttribArray(0);
- 
-  function blit(target, clear) {
-    if (!target) { gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight); gl.bindFramebuffer(gl.FRAMEBUFFER,null); }
-    else { gl.viewport(0,0,target.width,target.height); gl.bindFramebuffer(gl.FRAMEBUFFER,target.fbo); }
-    if (clear) { gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT); }
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-  }
- 
-  function createFBO(w, h, inFmt, fmt, type, param) {
-    gl.activeTexture(gl.TEXTURE0);
-    const tex = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, param);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, param);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, inFmt, w, h, 0, fmt, type, null);
-    const fbo = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-    gl.viewport(0,0,w,h); gl.clear(gl.COLOR_BUFFER_BIT);
-    return { texture: tex, fbo, width: w, height: h, texelSizeX: 1/w, texelSizeY: 1/h, attach(id){ gl.activeTexture(gl.TEXTURE0+id); gl.bindTexture(gl.TEXTURE_2D,tex); return id; } };
-  }
- 
-  function createDoubleFBO(w, h, inFmt, fmt, type, param) {
-    let f1 = createFBO(w,h,inFmt,fmt,type,param), f2 = createFBO(w,h,inFmt,fmt,type,param);
-    return { width:w, height:h, texelSizeX:f1.texelSizeX, texelSizeY:f1.texelSizeY, get read(){return f1;}, set read(v){f1=v;}, get write(){return f2;}, set write(v){f2=v;}, swap(){let t=f1;f1=f2;f2=t;} };
-  }
- 
-  function getRes(r) {
-    let ar = gl.drawingBufferWidth / gl.drawingBufferHeight;
-    if (ar < 1) ar = 1/ar;
-    const min = Math.round(r), max = Math.round(r*ar);
-    return gl.drawingBufferWidth > gl.drawingBufferHeight ? {width:max,height:min} : {width:min,height:max};
-  }
- 
-  const texType  = ext.halfFloatTexType;
-  const rgba     = ext.formatRGBA;
-  const rg       = ext.formatRG;
-  const r        = ext.formatR;
-  const filt     = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
- 
-  let sRes = getRes(config.SIM_RESOLUTION);
-  let dRes = getRes(config.DYE_RESOLUTION);
-  let dye      = createDoubleFBO(dRes.width, dRes.height, rgba.internalFormat, rgba.format, texType, filt);
-  let velocity = createDoubleFBO(sRes.width, sRes.height, rg.internalFormat,   rg.format,   texType, filt);
-  let divergence = createFBO(sRes.width, sRes.height, r.internalFormat, r.format, texType, gl.NEAREST);
-  let curl       = createFBO(sRes.width, sRes.height, r.internalFormat, r.format, texType, gl.NEAREST);
-  let pressure   = createDoubleFBO(sRes.width, sRes.height, r.internalFormat, r.format, texType, gl.NEAREST);
- 
-  function pointer() { return { texcoordX:0, texcoordY:0, prevTexcoordX:0, prevTexcoordY:0, deltaX:0, deltaY:0, moved:false, color:generateColor() }; }
-  const pointers = [pointer()];
-  let colorTimer = 0;
- 
-  window.addEventListener('mousemove', e => {
-    const p = pointers[0];
-    p.prevTexcoordX = p.texcoordX; p.prevTexcoordY = p.texcoordY;
-    p.texcoordX = e.clientX / canvas.clientWidth;
-    p.texcoordY = 1 - e.clientY / canvas.clientHeight;
-    p.deltaX = correctDX(p.texcoordX - p.prevTexcoordX);
-    p.deltaY = correctDY(p.texcoordY - p.prevTexcoordY);
-    p.moved  = Math.abs(p.deltaX) > 0 || Math.abs(p.deltaY) > 0;
-  });
- 
-  window.addEventListener('touchmove', e => {
-    const touches = e.targetTouches;
-    while (pointers.length < touches.length) pointers.push(pointer());
-    for (let i = 0; i < touches.length; i++) {
-      const p = pointers[i];
-      p.prevTexcoordX = p.texcoordX; p.prevTexcoordY = p.texcoordY;
-      p.texcoordX = touches[i].clientX / canvas.clientWidth;
-      p.texcoordY = 1 - touches[i].clientY / canvas.clientHeight;
-      p.deltaX = correctDX(p.texcoordX - p.prevTexcoordX);
-      p.deltaY = correctDY(p.texcoordY - p.prevTexcoordY);
-      p.moved  = Math.abs(p.deltaX) > 0 || Math.abs(p.deltaY) > 0;
+  return (target) => {
+    if (!target) {
+      gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight);
+      gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+    } else {
+      gl.viewport(0,0,target.width,target.height);
+      gl.bindFramebuffer(gl.FRAMEBUFFER,target.fbo);
     }
-  }, { passive: true });
-
-  window.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const touches = e.changedTouches;
-    for (let i = 0; i < touches.length; i++) {
-      let p = pointer();
-      p.texcoordX = touches[i].clientX / canvas.clientWidth;
-      p.texcoordY = 1.0 - touches[i].clientY / canvas.clientHeight;
-      p.color = generateColor();
-      p.down = true;
-      pointers.push(p);
-    }
-  }, { passive: false });
- 
-  function correctDX(d) { const ar = canvas.width/canvas.height; return ar < 1 ? d*ar : d; }
-  function correctDY(d) { const ar = canvas.width/canvas.height; return ar > 1 ? d/ar : d; }
- 
-  function generateColor() {
-    const c = HSVtoRGB(Math.random(), 1, 1);
-    return { r: c.r*.15, g: c.g*.15, b: c.b*.15 };
-  }
- 
-  function HSVtoRGB(h, s, v) {
-    const i = Math.floor(h*6), f = h*6-i, p = v*(1-s), q = v*(1-f*s), t = v*(1-(1-f)*s);
-    const cases = [[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,p,v],[v,p,q]];
-    const [r,g,b] = cases[i%6];
-    return { r, g, b };
-  }
- 
-  function splat(x, y, dx, dy, color) {
-    splatP.bind();
-    gl.uniform1i(splatP.u.uTarget, velocity.read.attach(0));
-    gl.uniform1f(splatP.u.aspectRatio, canvas.width/canvas.height);
-    gl.uniform2f(splatP.u.point, x, y);
-    gl.uniform3f(splatP.u.color, dx, dy, 0);
-    gl.uniform1f(splatP.u.radius, config.SPLAT_RADIUS/100 * (canvas.width > canvas.height ? canvas.width/canvas.height : 1));
-    blit(velocity.write); velocity.swap();
-    gl.uniform1i(splatP.u.uTarget, dye.read.attach(0));
-    gl.uniform3f(splatP.u.color, color.r, color.g, color.b);
-    blit(dye.write); dye.swap();
-  }
- 
-  function multipleSplats(n) {
-    for (let i = 0; i < n; i++) {
-      const c = generateColor();
-      c.r *= 10; c.g *= 10; c.b *= 10;
-      splat(Math.random(), Math.random(), 1000*(Math.random()-.5), 1000*(Math.random()-.5), c);
-    }
-  }
- 
-  let lastTime = Date.now();
- 
-  function update() {
-    const now = Date.now();
-    let dt = Math.min((now - lastTime)/1000, 0.016666);
-    lastTime = now;
- 
-    /* resize */
-    const w = (window.devicePixelRatio||1) * canvas.clientWidth | 0;
-    const h = (window.devicePixelRatio||1) * canvas.clientHeight | 0;
-    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
- 
-    /* color update */
-    colorTimer += dt * config.COLOR_UPDATE_SPEED;
-    if (colorTimer >= 1) { colorTimer = 0; pointers.forEach(p => { p.color = generateColor(); }); }
- 
-    /* apply inputs */
-    pointers.forEach(p => { if (p.moved) { p.moved = false; splat(p.texcoordX, p.texcoordY, p.deltaX*config.SPLAT_FORCE, p.deltaY*config.SPLAT_FORCE, p.color); } });
- 
-    /* simulation step */
-    gl.disable(gl.BLEND);
- 
-    curlP.bind();
-    gl.uniform2f(curlP.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-    gl.uniform1i(curlP.u.uVelocity, velocity.read.attach(0));
-    blit(curl);
- 
-    vortP.bind();
-    gl.uniform2f(vortP.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-    gl.uniform1i(vortP.u.uVelocity, velocity.read.attach(0));
-    gl.uniform1i(vortP.u.uCurl, curl.attach(1));
-    gl.uniform1f(vortP.u.curl, config.CURL);
-    gl.uniform1f(vortP.u.dt, dt);
-    blit(velocity.write); velocity.swap();
- 
-    divP.bind();
-    gl.uniform2f(divP.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-    gl.uniform1i(divP.u.uVelocity, velocity.read.attach(0));
-    blit(divergence);
- 
-    clearP.bind();
-    gl.uniform1i(clearP.u.uTexture, pressure.read.attach(0));
-    gl.uniform1f(clearP.u.value, config.PRESSURE);
-    blit(pressure.write); pressure.swap();
- 
-    presP.bind();
-    gl.uniform2f(presP.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-    gl.uniform1i(presP.u.uDivergence, divergence.attach(0));
-    for (let i = 0; i < config.PRESSURE_ITERATIONS; i++) {
-      gl.uniform1i(presP.u.uPressure, pressure.read.attach(1));
-      blit(pressure.write); pressure.swap();
-    }
- 
-    gradP.bind();
-    gl.uniform2f(gradP.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-    gl.uniform1i(gradP.u.uPressure, pressure.read.attach(0));
-    gl.uniform1i(gradP.u.uVelocity, velocity.read.attach(1));
-    blit(velocity.write); velocity.swap();
- 
-    advP.bind();
-    gl.uniform2f(advP.u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-    gl.uniform2f(advP.u.dyeTexelSize, velocity.texelSizeX, velocity.texelSizeY);
-    const vid = velocity.read.attach(0);
-    gl.uniform1i(advP.u.uVelocity, vid);
-    gl.uniform1i(advP.u.uSource, vid);
-    gl.uniform1f(advP.u.dt, dt);
-    gl.uniform1f(advP.u.dissipation, config.VELOCITY_DISSIPATION);
-    blit(velocity.write); velocity.swap();
- 
-    gl.uniform2f(advP.u.dyeTexelSize, dye.texelSizeX, dye.texelSizeY);
-    gl.uniform1i(advP.u.uVelocity, velocity.read.attach(0));
-    gl.uniform1i(advP.u.uSource, dye.read.attach(1));
-    gl.uniform1f(advP.u.dissipation, config.DENSITY_DISSIPATION);
-    blit(dye.write); dye.swap();
- 
-    /* render */
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.enable(gl.BLEND);
-    dispP.bind();
-    gl.uniform2f(dispP.u.texelSize, 1/gl.drawingBufferWidth, 1/gl.drawingBufferHeight);
-    gl.uniform1i(dispP.u.uTexture, dye.read.attach(0));
-    blit(null);
- 
-    requestAnimationFrame(update);
-  }
- 
-  multipleSplats(Math.random() * 15 + 5 | 0);
-  requestAnimationFrame(update);
- 
-  console.log('✅ Smokey Fluid Cursor — Active on RAUSHAN PORTFOLIO');
+    gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0);
+  };
 })();
+
+/* ─── FBOs ─── */
+const T = ext.halfFloatTexType;
+const filtering = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
+const RGBA = ext.formatRGBA, RG = ext.formatRG, R = ext.formatR;
+
+function mkFBO(w,h,iF,f,t,p){
+  gl.activeTexture(gl.TEXTURE0);
+  const tex=gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,p);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,p);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D,0,iF,w,h,0,f,t,null);
+  const fbo=gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+  gl.viewport(0,0,w,h); gl.clear(gl.COLOR_BUFFER_BIT);
+  return {
+    texture:tex,fbo,width:w,height:h,
+    texelSizeX:1/w,texelSizeY:1/h,
+    attach(id){ gl.activeTexture(gl.TEXTURE0+id); gl.bindTexture(gl.TEXTURE_2D,tex); return id; }
+  };
+}
+
+function mkDFBO(w,h,iF,f,t,p){
+  let a=mkFBO(w,h,iF,f,t,p), b=mkFBO(w,h,iF,f,t,p);
+  return {
+    width:w,height:h,texelSizeX:a.texelSizeX,texelSizeY:a.texelSizeY,
+    get read(){return a;}, set read(v){a=v;},
+    get write(){return b;}, set write(v){b=v;},
+    swap(){let tmp=a;a=b;b=tmp;}
+  };
+}
+
+function getRes(r){
+  let ar=gl.drawingBufferWidth/gl.drawingBufferHeight;
+  if(ar<1)ar=1/ar;
+  const min=Math.round(r), max=Math.round(r*ar);
+  return gl.drawingBufferWidth>gl.drawingBufferHeight
+    ? {width:max,height:min} : {width:min,height:max};
+}
+
+let simRes=getRes(config.SIM_RESOLUTION), dyeRes=getRes(config.DYE_RESOLUTION);
+let dye=mkDFBO(dyeRes.width,dyeRes.height,RGBA.internalFormat,RGBA.format,T,filtering);
+let vel=mkDFBO(simRes.width,simRes.height,RG.internalFormat,RG.format,T,filtering);
+let div=mkFBO(simRes.width,simRes.height,R.internalFormat,R.format,T,gl.NEAREST);
+let curl=mkFBO(simRes.width,simRes.height,R.internalFormat,R.format,T,gl.NEAREST);
+let pres=mkDFBO(simRes.width,simRes.height,R.internalFormat,R.format,T,gl.NEAREST);
+
+/* ─── POINTER ─── */
+function Ptr(){ this.texcoordX=this.texcoordY=this.prevTexcoordX=this.prevTexcoordY=0; this.deltaX=this.deltaY=0; this.down=this.moved=false; this.color=[30,0,300]; }
+const ptrs=[new Ptr()];
+
+/* ─── EVENTS — SCROLL-SAFE ─── */
+/* KEY FIX: passive:true on touchmove = scroll nahi rukega */
+window.addEventListener('mousemove', e => {
+  const p=ptrs[0];
+  p.prevTexcoordX=p.texcoordX; p.prevTexcoordY=p.texcoordY;
+  p.texcoordX=e.clientX/canvas.clientWidth;
+  p.texcoordY=1-e.clientY/canvas.clientHeight;
+  p.deltaX=cDX(p.texcoordX-p.prevTexcoordX);
+  p.deltaY=cDY(p.texcoordY-p.prevTexcoordY);
+  p.moved=Math.abs(p.deltaX)>0||Math.abs(p.deltaY)>0;
+});
+
+/* passive:true — SCROLL FIX — preventDefault nahi chalega */
+window.addEventListener('touchmove', e => {
+  const t=e.targetTouches;
+  while(ptrs.length<t.length) ptrs.push(new Ptr());
+  for(let i=0;i<t.length;i++){
+    const p=ptrs[i];
+    p.prevTexcoordX=p.texcoordX; p.prevTexcoordY=p.texcoordY;
+    p.texcoordX=t[i].pageX/canvas.clientWidth;
+    p.texcoordY=1-t[i].pageY/canvas.clientHeight;
+    p.deltaX=cDX(p.texcoordX-p.prevTexcoordX);
+    p.deltaY=cDY(p.texcoordY-p.prevTexcoordY);
+    p.moved=Math.abs(p.deltaX)>0||Math.abs(p.deltaY)>0;
+  }
+}, { passive: true }); /* ← YE HAI SCROLL FIX */
+
+function cDX(d){ const ar=canvas.width/canvas.height; return ar<1?d*ar:d; }
+function cDY(d){ const ar=canvas.width/canvas.height; return ar>1?d/ar:d; }
+
+/* ─── COLOR ─── */
+function genColor(){
+  let c=HSV(Math.random(),1,1); c.r*=.15; c.g*=.15; c.b*=.15; return c;
+}
+function HSV(h,s,v){
+  const i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);
+  const m=[[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,p,v],[v,p,q]][i%6];
+  return {r:m[0],g:m[1],b:m[2]};
+}
+
+/* ─── SPLAT ─── */
+function splat(x,y,dx,dy,color){
+  P.splat.bind();
+  gl.uniform1i(P.splat.uniforms.uTarget,vel.read.attach(0));
+  gl.uniform1f(P.splat.uniforms.aspectRatio,canvas.width/canvas.height);
+  gl.uniform2f(P.splat.uniforms.point,x,y);
+  gl.uniform3f(P.splat.uniforms.color,dx,dy,0);
+  gl.uniform1f(P.splat.uniforms.radius,cR(config.SPLAT_RADIUS/100));
+  blit(vel.write); vel.swap();
+  gl.uniform1i(P.splat.uniforms.uTarget,dye.read.attach(0));
+  gl.uniform3f(P.splat.uniforms.color,color.r,color.g,color.b);
+  blit(dye.write); dye.swap();
+}
+function cR(r){ const ar=canvas.width/canvas.height; return ar>1?r*ar:r; }
+function multiSplats(n){
+  for(let i=0;i<n;i++){
+    const c=genColor(); c.r*=10; c.g*=10; c.b*=10;
+    splat(Math.random(),Math.random(),1000*(Math.random()-.5),1000*(Math.random()-.5),c);
+  }
+}
+
+/* ─── LOOP ─── */
+let lastTime=Date.now(), colTimer=0;
+
+function update(){
+  const dt=Math.min((Date.now()-lastTime)/1000,.016666);
+  lastTime=Date.now();
+
+  /* resize check */
+  const w=Math.floor(canvas.clientWidth*(window.devicePixelRatio||1));
+  const h=Math.floor(canvas.clientHeight*(window.devicePixelRatio||1));
+  if(canvas.width!==w||canvas.height!==h){ canvas.width=w; canvas.height=h; }
+
+  /* color update */
+  colTimer+=dt*config.COLOR_UPDATE_SPEED;
+  if(colTimer>=1){ colTimer=0; ptrs.forEach(p=>p.color=genColor()); }
+
+  /* inputs */
+  ptrs.forEach(p=>{ if(p.moved){ p.moved=false; splat(p.texcoordX,p.texcoordY,p.deltaX*config.SPLAT_FORCE,p.deltaY*config.SPLAT_FORCE,p.color); } });
+
+  /* simulation */
+  gl.disable(gl.BLEND);
+  /* curl */
+  P.curl.bind();
+  gl.uniform2f(P.curl.uniforms.texelSize,vel.texelSizeX,vel.texelSizeY);
+  gl.uniform1i(P.curl.uniforms.uVelocity,vel.read.attach(0));
+  blit(curl);
+  /* vorticity */
+  P.vorticity.bind();
+  gl.uniform2f(P.vorticity.uniforms.texelSize,vel.texelSizeX,vel.texelSizeY);
+  gl.uniform1i(P.vorticity.uniforms.uVelocity,vel.read.attach(0));
+  gl.uniform1i(P.vorticity.uniforms.uCurl,curl.attach(1));
+  gl.uniform1f(P.vorticity.uniforms.curl,config.CURL);
+  gl.uniform1f(P.vorticity.uniforms.dt,dt);
+  blit(vel.write); vel.swap();
+  /* divergence */
+  P.diverge.bind();
+  gl.uniform2f(P.diverge.uniforms.texelSize,vel.texelSizeX,vel.texelSizeY);
+  gl.uniform1i(P.diverge.uniforms.uVelocity,vel.read.attach(0));
+  blit(div);
+  /* clear pressure */
+  P.clear.bind();
+  gl.uniform1i(P.clear.uniforms.uTexture,pres.read.attach(0));
+  gl.uniform1f(P.clear.uniforms.value,config.PRESSURE);
+  blit(pres.write); pres.swap();
+  /* pressure solve */
+  P.pressure.bind();
+  gl.uniform2f(P.pressure.uniforms.texelSize,vel.texelSizeX,vel.texelSizeY);
+  gl.uniform1i(P.pressure.uniforms.uDivergence,div.attach(0));
+  for(let i=0;i<config.PRESSURE_ITERATIONS;i++){
+    gl.uniform1i(P.pressure.uniforms.uPressure,pres.read.attach(1));
+    blit(pres.write); pres.swap();
+  }
+  /* grad subtract */
+  P.gradSub.bind();
+  gl.uniform2f(P.gradSub.uniforms.texelSize,vel.texelSizeX,vel.texelSizeY);
+  gl.uniform1i(P.gradSub.uniforms.uPressure,pres.read.attach(0));
+  gl.uniform1i(P.gradSub.uniforms.uVelocity,vel.read.attach(1));
+  blit(vel.write); vel.swap();
+  /* advect velocity */
+  P.advection.bind();
+  gl.uniform2f(P.advection.uniforms.texelSize,vel.texelSizeX,vel.texelSizeY);
+  if(!ext.supportLinearFiltering)
+    gl.uniform2f(P.advection.uniforms.dyeTexelSize,vel.texelSizeX,vel.texelSizeY);
+  const vId=vel.read.attach(0);
+  gl.uniform1i(P.advection.uniforms.uVelocity,vId);
+  gl.uniform1i(P.advection.uniforms.uSource,vId);
+  gl.uniform1f(P.advection.uniforms.dt,dt);
+  gl.uniform1f(P.advection.uniforms.dissipation,config.VELOCITY_DISSIPATION);
+  blit(vel.write); vel.swap();
+  /* advect dye */
+  if(!ext.supportLinearFiltering)
+    gl.uniform2f(P.advection.uniforms.dyeTexelSize,dye.texelSizeX,dye.texelSizeY);
+  gl.uniform1i(P.advection.uniforms.uVelocity,vel.read.attach(0));
+  gl.uniform1i(P.advection.uniforms.uSource,dye.read.attach(1));
+  gl.uniform1f(P.advection.uniforms.dissipation,config.DENSITY_DISSIPATION);
+  blit(dye.write); dye.swap();
+
+  /* render */
+  gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+  gl.enable(gl.BLEND);
+  P.display.bind();
+  if(config.SHADING)
+    gl.uniform2f(P.display.uniforms.texelSize,1/gl.drawingBufferWidth,1/gl.drawingBufferHeight);
+  gl.uniform1i(P.display.uniforms.uTexture,dye.read.attach(0));
+  blit(null);
+
+  requestAnimationFrame(update);
+}
+
+/* ─── INIT ─── */
+multiSplats(Math.floor(Math.random()*15)+5);
+requestAnimationFrame(update);
+window.addEventListener('resize',()=>{
+  canvas.width=Math.floor(canvas.clientWidth*(window.devicePixelRatio||1));
+  canvas.height=Math.floor(canvas.clientHeight*(window.devicePixelRatio||1));
+});
+console.log('✅ Fluid Sim — Mobile Scroll Fixed | RealAgent.ai');
+
+} /* end desktop-only block */
 </script>
- 
+
 </body>
+
+
 
 </html>
