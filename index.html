@@ -999,7 +999,7 @@
   }, { passive: true });
 
   window.addEventListener('touchstart', e => {
-    e.preventDefault();
+    /* passive:true — scroll bilkul nahi rukegi */
     const touches = e.changedTouches;
     for (let i = 0; i < touches.length; i++) {
       let p = pointer();
@@ -1009,8 +1009,8 @@
       p.down = true;
       pointers.push(p);
     }
-  }, { passive: false });
- 
+  }, { passive: true })
+  
   function correctDX(d) { const ar = canvas.width/canvas.height; return ar < 1 ? d*ar : d; }
   function correctDY(d) { const ar = canvas.width/canvas.height; return ar > 1 ? d/ar : d; }
  
