@@ -1070,6 +1070,7 @@
           document.getElementById('contactFormCard').style.display = 'none';
           document.getElementById('formSuccess').style.display = 'flex';
         } catch (err) {
+          console.error(err);
           btn.textContent = 'Submit My Project Details →';
           btn.disabled = false;
           alert('Error. Try WhatsApp.');
