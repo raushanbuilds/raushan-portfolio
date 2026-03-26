@@ -1,0 +1,230 @@
+<!--
+ 
+
+<style>
+/* ── Hero container must be relative ── */
+.hero,
+#hero,
+[class*="hero"] {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* ── Canvas background ── */
+#hero-cube-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* ── Hero content UPAR rahega canvas ke ── */
+.hero > *:not(#hero-cube-canvas),
+#hero > *:not(#hero-cube-canvas),
+[class*="hero"] > *:not(#hero-cube-canvas) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Mobile: simpler version ── */
+@media (max-width: 768px) {
+  #hero-cube-canvas { opacity: 0.5; }
+}
+</style>
+
+<!-- Canvas hero ke andar, content se PEHLE paste karo -->
+<canvas id="hero-cube-canvas"></canvas>
+
+<script>
+(function() {
+  const canvas = document.getElementById('hero-cube-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  /* ── Resize handler ── */
+  function resize() {
+    const hero = canvas.parentElement;
+    canvas.width  = hero.offsetWidth;
+    canvas.height = hero.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── Color palette — Blue + Purple ── */
+  const COLORS = [
+    'rgba(139, 92, 246,',   /* purple */
+    'rgba(99,  102, 241,',  /* indigo */
+    'rgba(59,  130, 246,',  /* blue   */
+    'rgba(6,   182, 212,',  /* cyan   */
+    'rgba(168,  85, 247,',  /* violet */
+  ];
+
+  /* ── Single cube definition ── */
+  function makeCube() {
+    const isMob = window.innerWidth < 768;
+    const size  = isMob
+      ? 20 + Math.random() * 35
+      : 30 + Math.random() * 60;
+
+    return {
+      x        : Math.random() * canvas.width,
+      y        : Math.random() * canvas.height,
+      size     : size,
+      speedX   : (Math.random() - 0.5) * 0.4,
+      speedY   : (Math.random() - 0.5) * 0.4,
+      rotX     : Math.random() * Math.PI * 2,
+      rotY     : Math.random() * Math.PI * 2,
+      rotSpeedX: (Math.random() - 0.5) * 0.012,
+      rotSpeedY: (Math.random() - 0.5) * 0.012,
+      color    : COLORS[Math.floor(Math.random() * COLORS.length)],
+      alpha    : 0.08 + Math.random() * 0.18,
+      wireOnly : Math.random() > 0.45, /* some solid, some wireframe */
+    };
+  }
+
+  /* ── Create cubes pool ── */
+  const COUNT  = window.innerWidth < 768 ? 10 : 18;
+  const cubes  = Array.from({ length: COUNT }, makeCube);
+
+  /* ── Project 3D → 2D ── */
+  function project3D(px, py, pz, cx, cy, size) {
+    const fov  = size * 3.5;
+    const dist = fov / (fov + pz);
+    return {
+      x: cx + px * dist,
+      y: cy + py * dist,
+      z: pz,
+    };
+  }
+
+  /* ── Get 8 rotated cube vertices ── */
+  function getCubeVertices(cx, cy, s, rX, rY) {
+    const h    = s / 2;
+    const raw  = [
+      [-h,-h,-h],[h,-h,-h],[h,h,-h],[-h,h,-h],
+      [-h,-h, h],[h,-h, h],[h,h, h],[-h,h, h],
+    ];
+
+    return raw.map(([x,y,z]) => {
+      /* rotate Y */
+      let x1 =  x * Math.cos(rY) + z * Math.sin(rY);
+      let z1 = -x * Math.sin(rY) + z * Math.cos(rY);
+      /* rotate X */
+      let y1 =  y * Math.cos(rX) - z1 * Math.sin(rX);
+      let z2 =  y * Math.sin(rX) + z1 * Math.cos(rX);
+      return project3D(x1, y1, z2, cx, cy, s);
+    });
+  }
+
+  /* ── Cube edges — 12 edges of a box ── */
+  const EDGES = [
+    [0,1],[1,2],[2,3],[3,0], /* back face  */
+    [4,5],[5,6],[6,7],[7,4], /* front face */
+    [0,4],[1,5],[2,6],[3,7], /* connectors */
+  ];
+
+  /* ── Draw one cube ── */
+  function drawCube(c) {
+    const verts = getCubeVertices(c.x, c.y, c.size, c.rotX, c.rotY);
+
+    /* Faces (solid, semi-transparent) */
+    if (!c.wireOnly) {
+      const faces = [
+        [0,1,2,3], [4,5,6,7],
+        [0,1,5,4], [2,3,7,6],
+        [0,3,7,4], [1,2,6,5],
+      ];
+      faces.forEach(f => {
+        ctx.beginPath();
+        ctx.moveTo(verts[f[0]].x, verts[f[0]].y);
+        ctx.lineTo(verts[f[1]].x, verts[f[1]].y);
+        ctx.lineTo(verts[f[2]].x, verts[f[2]].y);
+        ctx.lineTo(verts[f[3]].x, verts[f[3]].y);
+        ctx.closePath();
+        ctx.fillStyle = c.color + (c.alpha * 0.3) + ')';
+        ctx.fill();
+      });
+    }
+
+    /* Wireframe edges */
+    ctx.strokeStyle = c.color + (c.wireOnly ? c.alpha : c.alpha * 0.9) + ')';
+    ctx.lineWidth   = c.wireOnly ? 1 : 0.6;
+    EDGES.forEach(([a, b]) => {
+      ctx.beginPath();
+      ctx.moveTo(verts[a].x, verts[a].y);
+      ctx.lineTo(verts[b].x, verts[b].y);
+      ctx.stroke();
+    });
+
+    /* Corner glow dots */
+    verts.forEach(v => {
+      ctx.beginPath();
+      ctx.arc(v.x, v.y, 1.2, 0, Math.PI * 2);
+      ctx.fillStyle = c.color + (c.alpha * 1.5) + ')';
+      ctx.fill();
+    });
+  }
+
+  /* ── Subtle grid overlay ── */
+  function drawGrid() {
+    const gap   = 60;
+    const alpha = 0.04;
+    ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
+    ctx.lineWidth   = 0.5;
+    for (let x = 0; x < canvas.width; x += gap) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += gap) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+  }
+
+  /* ── Gradient vignette ── */
+  function drawVignette() {
+    const grad = ctx.createRadialGradient(
+      canvas.width / 2, canvas.height / 2, canvas.height * 0.1,
+      canvas.width / 2, canvas.height / 2, canvas.height * 0.85
+    );
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.55)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  /* ── Main animation loop ── */
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    /* background */
+    ctx.fillStyle = 'rgba(4, 2, 18, 0)'; /* transparent — page bg dikhega */
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    drawGrid();
+
+    /* update + draw cubes */
+    cubes.forEach(c => {
+      c.x    += c.speedX;
+      c.y    += c.speedY;
+      c.rotX += c.rotSpeedX;
+      c.rotY += c.rotSpeedY;
+
+      /* wrap around edges */
+      const margin = c.size * 1.5;
+      if (c.x < -margin)              c.x = canvas.width  + margin;
+      if (c.x > canvas.width + margin) c.x = -margin;
+      if (c.y < -margin)              c.y = canvas.height + margin;
+      if (c.y > canvas.height + margin) c.y = -margin;
+
+      drawCube(c);
+    });
+
+    drawVignette();
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+  console.log('✅ Hero Cube Background — RealAgent.ai');
+})();
+</script>
