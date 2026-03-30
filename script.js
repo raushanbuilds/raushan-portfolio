@@ -188,34 +188,34 @@
     });
   });
 
-  // ---- LEAD CAPTURE FORM SUBMISSION ----
-  var leadForm = document.getElementById('leadForm');
-  var formSuccess = document.getElementById('formSuccess');
+  // ---- LEAD CAPTURE FORM SUBMISSION (Moved to index.html for Google Sheets) ----
+  // var leadForm = document.getElementById('leadForm');
+  // var formSuccess = document.getElementById('formSuccess');
 
-  if (leadForm && formSuccess) {
-    leadForm.addEventListener('submit', function (e) {
-      e.preventDefault();
+  // if (leadForm && formSuccess) {
+  //   leadForm.addEventListener('submit', function (e) {
+  //     e.preventDefault();
 
-      var formData = new FormData(leadForm);
+  //     var formData = new FormData(leadForm);
 
-      fetch(leadForm.action, {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' }
-      }).then(function (response) {
-        if (response.ok) {
-          leadForm.style.display = 'none';
-          formSuccess.style.display = 'block';
-        } else {
-          leadForm.style.display = 'none';
-          formSuccess.style.display = 'block';
-        }
-      }).catch(function () {
-        leadForm.style.display = 'none';
-        formSuccess.style.display = 'block';
-      });
-    });
-  }
+  //     fetch(leadForm.action, {
+  //       method: 'POST',
+  //       body: formData,
+  //       headers: { 'Accept': 'application/json' }
+  //     }).then(function (response) {
+  //       if (response.ok) {
+  //         leadForm.style.display = 'none';
+  //         formSuccess.style.display = 'block';
+  //       } else {
+  //         leadForm.style.display = 'none';
+  //         formSuccess.style.display = 'block';
+  //       }
+  //     }).catch(function () {
+  //       leadForm.style.display = 'none';
+  //       formSuccess.style.display = 'block';
+  //     });
+  //   });
+  // }
 
 })();
 
